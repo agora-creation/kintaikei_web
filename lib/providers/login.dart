@@ -32,36 +32,43 @@ class LoginProvider with ChangeNotifier {
     _auth?.authStateChanges().listen(_onStateChanged);
   }
 
-  Future<String?> register() async {
+  Future<String?> register({
+    required String name,
+    required String loginId,
+    required String password,
+  }) async {
     String? error;
+    if (name == '') return '会社名を入力してください';
+    if (loginId == '') return 'ログインIDを入力してください';
+    if (password == '') return 'パスワードを入力してください';
     try {
       _status = AuthStatus.authenticating;
       notifyListeners();
       final result = await _auth?.signInAnonymously();
       _authUser = result?.user;
-      bool isExist = await _companyService.loginIdCheck('agora');
+      bool isExist = await _companyService.loginIdCheck(loginId);
       if (!isExist) {
         String id = _companyService.id();
         _companyService.create({
           'id': id,
-          'name': '(有)アゴラ・クリエーション',
-          'loginId': 'agora',
-          'password': 'agora0101',
+          'name': name,
+          'loginId': loginId,
+          'password': password,
           'createdAt': DateTime.now(),
         });
         String groupId = _groupService.id();
         _groupService.create({
           'id': groupId,
           'companyId': id,
-          'companyName': '(有)アゴラ・クリエーション',
+          'companyName': name,
           'name': '本社',
-          'loginId': 'agora-1',
-          'password': 'agora0101',
+          'loginId': '$loginId-1',
+          'password': password,
           'userIds': [],
           'createdAt': DateTime.now(),
         });
-        await _localDBService.setString('loginId', 'agora');
-        await _localDBService.setString('password', 'agora0101');
+        await _localDBService.setString('loginId', loginId);
+        await _localDBService.setString('password', password);
       } else {
         await _auth?.signOut();
         _status = AuthStatus.unauthenticated;
@@ -76,16 +83,21 @@ class LoginProvider with ChangeNotifier {
     return error;
   }
 
-  Future<String?> login() async {
+  Future<String?> login({
+    required String loginId,
+    required String password,
+  }) async {
     String? error;
+    if (loginId == '') return 'ログインIDを入力してください';
+    if (password == '') return 'パスワードを入力してください';
     try {
       _status = AuthStatus.authenticating;
       notifyListeners();
       final result = await _auth?.signInAnonymously();
       _authUser = result?.user;
       CompanyModel? tmpCompany = await _companyService.selectToLogin(
-        loginId: 'agora',
-        password: 'agora0101',
+        loginId: loginId,
+        password: password,
       );
       if (tmpCompany != null) {
         _company = tmpCompany;
@@ -95,8 +107,8 @@ class LoginProvider with ChangeNotifier {
         if (tmpGroups.isNotEmpty) {
           _groups = tmpGroups;
         }
-        await _localDBService.setString('loginId', 'agora');
-        await _localDBService.setString('password', 'agora0101');
+        await _localDBService.setString('loginId', loginId);
+        await _localDBService.setString('password', password);
       } else {
         await _auth?.signOut();
         _status = AuthStatus.unauthenticated;
@@ -121,30 +133,21 @@ class LoginProvider with ChangeNotifier {
     return Future.delayed(Duration.zero);
   }
 
-  Future reload() async {
-    String? email = await getPrefsString('email');
-    String? password = await getPrefsString('password');
-    if (email != null && password != null) {
-      UserModel? tmpUser = await _userService.selectData(
-        email: email,
+  Future reloadData() async {
+    String? loginId = await _localDBService.getString('loginId');
+    String? password = await _localDBService.getString('password');
+    if (loginId != null && password != null) {
+      CompanyModel? tmpCompany = await _companyService.selectToLogin(
+        loginId: loginId,
         password: password,
-        admin: true,
       );
-      if (tmpUser != null) {
-        OrganizationModel? tmpOrganization =
-            await _organizationService.selectData(
-          userId: tmpUser.id,
+      if (tmpCompany != null) {
+        _company = tmpCompany;
+        List<CompanyGroupModel> tmpGroups = await _groupService.selectList(
+          companyId: tmpCompany.id,
         );
-        if (tmpOrganization != null) {
-          _user = tmpUser;
-          _organization = tmpOrganization;
-          OrganizationGroupModel? tmpGroup = await _groupService.selectData(
-            organizationId: tmpOrganization.id,
-            userId: tmpUser.id,
-          );
-          if (tmpGroup != null) {
-            _group = tmpGroup;
-          }
+        if (tmpGroups.isNotEmpty) {
+          _groups = tmpGroups;
         }
       }
     }
@@ -157,32 +160,20 @@ class LoginProvider with ChangeNotifier {
     } else {
       _authUser = authUser;
       _status = AuthStatus.authenticated;
-      String? email = await getPrefsString('email');
-      String? password = await getPrefsString('password');
-      if (email != null && password != null) {
-        UserModel? tmpUser = await _userService.selectData(
-          email: email,
+      String? loginId = await _localDBService.getString('loginId');
+      String? password = await _localDBService.getString('password');
+      if (loginId != null && password != null) {
+        CompanyModel? tmpCompany = await _companyService.selectToLogin(
+          loginId: loginId,
           password: password,
-          admin: true,
         );
-        if (tmpUser != null) {
-          OrganizationModel? tmpOrganization =
-              await _organizationService.selectData(
-            userId: tmpUser.id,
+        if (tmpCompany != null) {
+          _company = tmpCompany;
+          List<CompanyGroupModel> tmpGroups = await _groupService.selectList(
+            companyId: tmpCompany.id,
           );
-          if (tmpOrganization != null) {
-            _user = tmpUser;
-            _organization = tmpOrganization;
-            OrganizationGroupModel? tmpGroup = await _groupService.selectData(
-              organizationId: tmpOrganization.id,
-              userId: tmpUser.id,
-            );
-            if (tmpGroup != null) {
-              _group = tmpGroup;
-            }
-          } else {
-            _authUser = null;
-            _status = AuthStatus.unauthenticated;
+          if (tmpGroups.isNotEmpty) {
+            _groups = tmpGroups;
           }
         } else {
           _authUser = null;

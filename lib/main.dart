@@ -3,6 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kintaikei_web/common/style.dart';
+import 'package:kintaikei_web/providers/login.dart';
+import 'package:kintaikei_web/screens/home.dart';
+import 'package:kintaikei_web/screens/login.dart';
+import 'package:kintaikei_web/screens/splash.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
@@ -35,7 +39,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [],
+      providers: [
+        ChangeNotifierProvider.value(value: LoginProvider.initialize()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         localizationsDelegates: const [
@@ -48,8 +54,28 @@ class MyApp extends StatelessWidget {
         locale: const Locale('ja'),
         title: '勤怠計 - 管理画面',
         theme: customTheme(),
-        home: Container(),
+        home: const SplashController(),
       ),
     );
+  }
+}
+
+class SplashController extends StatelessWidget {
+  const SplashController({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final loginProvider = Provider.of<LoginProvider>(context);
+    switch (loginProvider.status) {
+      case AuthStatus.uninitialized:
+        return const SplashScreen();
+      case AuthStatus.unauthenticated:
+      case AuthStatus.authenticating:
+        return const LoginScreen();
+      case AuthStatus.authenticated:
+        return const HomeScreen();
+      default:
+        return const LoginScreen();
+    }
   }
 }
