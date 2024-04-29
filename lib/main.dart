@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kintaikei_web/common/style.dart';
+import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
 import 'package:kintaikei_web/screens/home.dart';
 import 'package:kintaikei_web/screens/login.dart';
@@ -41,10 +42,12 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: LoginProvider.initialize()),
+        ChangeNotifierProvider.value(value: HomeProvider()),
       ],
-      child: MaterialApp(
+      child: FluentApp(
         debugShowCheckedModeBanner: false,
         localizationsDelegates: const [
+          FluentLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,

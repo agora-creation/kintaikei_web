@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 
 const kBackgroundColor = Color(0xFFFFFFFF);
 const kMainColor = Color(0xFF3949AB);
@@ -13,48 +12,31 @@ const kBlueColor = Color(0xFF2196F3);
 const kRedColor = Color(0xFFF44336);
 const kYellowColor = Color(0xFFFFEB3B);
 
-ThemeData customTheme() {
-  return ThemeData(
+FluentThemeData customTheme() {
+  return FluentThemeData(
     scaffoldBackgroundColor: kBackgroundColor,
     fontFamily: 'SourceHanSansJP-Regular',
-    appBarTheme: const AppBarTheme(
-      backgroundColor: kBackgroundColor,
-      elevation: 0,
-      centerTitle: false,
-      systemOverlayStyle: SystemUiOverlayStyle.dark,
-      titleTextStyle: TextStyle(
-        color: kBlackColor,
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        fontFamily: 'SourceHanSansJP-Bold',
-      ),
-      iconTheme: IconThemeData(color: kBlackColor),
-    ),
-    textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: kBlackColor),
-      bodyMedium: TextStyle(color: kBlackColor),
-      bodySmall: TextStyle(color: kBlackColor),
-    ),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
-      foregroundColor: kWhiteColor,
-      backgroundColor: kBlueColor,
-      focusColor: kWhiteColor,
-      hoverColor: kWhiteColor,
-      elevation: 0,
-      focusElevation: 0,
-      hoverElevation: 0,
-      highlightElevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100),
-      ),
-    ),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: kWhiteColor,
-      elevation: 0,
-      selectedItemColor: kBlackColor,
-      unselectedItemColor: kBlackColor,
-    ),
+    activeColor: kWhiteColor,
+    cardColor: kWhiteColor,
     visualDensity: VisualDensity.adaptivePlatformDensity,
+    navigationPaneTheme: const NavigationPaneThemeData(
+      backgroundColor: kWhiteColor,
+      highlightColor: kBackgroundColor,
+    ),
+    checkboxTheme: CheckboxThemeData(
+      checkedDecoration: ButtonState.all<Decoration>(
+        BoxDecoration(
+          color: kBlueColor,
+          border: Border.all(color: kBlueColor),
+        ),
+      ),
+      uncheckedDecoration: ButtonState.all<Decoration>(
+        BoxDecoration(
+          color: kWhiteColor,
+          border: Border.all(color: kGrey600Color),
+        ),
+      ),
+    ),
   );
 }
 

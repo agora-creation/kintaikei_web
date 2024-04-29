@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/models/company.dart';
 import 'package:kintaikei_web/models/company_group.dart';
 import 'package:kintaikei_web/services/company.dart';

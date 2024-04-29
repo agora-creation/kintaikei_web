@@ -1,17 +1,16 @@
 import 'dart:math';
 
-import 'package:alert_banner/exports.dart';
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:intl/intl.dart';
-import 'package:kintaikei_web/widgets/custom_alert_banner.dart';
 
 void showMessage(BuildContext context, String msg, bool success) {
-  showAlertBanner(
-    context,
-    () {},
-    CustomAlertBanner(msg: msg, success: success),
-    alertBannerLocation: AlertBannerLocation.top,
-  );
+  displayInfoBar(context, builder: (context, close) {
+    return InfoBar(
+      title: Text(msg),
+      severity:
+          success == true ? InfoBarSeverity.success : InfoBarSeverity.error,
+    );
+  });
 }
 
 String convertDateText(String format, DateTime? date) {

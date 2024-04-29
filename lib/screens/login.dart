@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/common/functions.dart';
 import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/login.dart';
 import 'package:kintaikei_web/screens/home.dart';
 import 'package:kintaikei_web/widgets/custom_button.dart';
-import 'package:kintaikei_web/widgets/custom_text_form_field.dart';
+import 'package:kintaikei_web/widgets/custom_text_box.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,8 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final loginProvider = Provider.of<LoginProvider>(context);
-    return Scaffold(
-      body: Center(
+    return ScaffoldPage(
+      content: Center(
         child: SizedBox(
           width: 400,
           child: Column(
@@ -58,63 +58,45 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    CustomTextFormField(
+                    CustomTextBox(
                       controller: loginIdController,
-                      textInputType: TextInputType.text,
+                      placeholder: 'ログインID',
+                      keyboardType: TextInputType.text,
                       maxLines: 1,
-                      label: 'ログインID',
-                      color: kBlackColor,
-                      prefix: Icons.business,
                     ),
                     const SizedBox(height: 8),
-                    CustomTextFormField(
+                    CustomTextBox(
                       controller: passwordController,
-                      obscureText: obscureText,
-                      textInputType: TextInputType.visiblePassword,
+                      placeholder: 'パスワード',
+                      keyboardType: TextInputType.visiblePassword,
                       maxLines: 1,
-                      label: 'パスワード',
-                      color: kBlackColor,
-                      prefix: Icons.password,
-                      suffix:
-                          obscureText ? Icons.visibility_off : Icons.visibility,
-                      onTap: () {
-                        setState(() {
-                          obscureText = !obscureText;
-                        });
-                      },
+                      obscureText: obscureText,
                     ),
                     const SizedBox(height: 16),
-                    loginIdController.text != '' &&
-                            passwordController.text != ''
-                        ? CustomButton(
-                            label: 'ログイン',
-                            labelColor: kWhiteColor,
-                            backgroundColor: kBlueColor,
-                            onPressed: () async {
-                              String? error = await loginProvider.login(
-                                loginId: loginIdController.text,
-                                password: passwordController.text,
-                              );
-                              if (error != null) {
-                                if (!mounted) return;
-                                showMessage(context, error, false);
-                                return;
-                              }
-                              await loginProvider.reloadData();
-                              if (!mounted) return;
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            },
-                          )
-                        : const CustomButton(
-                            label: 'ログイン',
-                            labelColor: kWhiteColor,
-                            backgroundColor: kGreyColor,
+                    CustomButton(
+                      label: 'ログイン',
+                      labelColor: kWhiteColor,
+                      backgroundColor: kBlueColor,
+                      onPressed: () async {
+                        String? error = await loginProvider.login(
+                          loginId: loginIdController.text,
+                          password: passwordController.text,
+                        );
+                        if (error != null) {
+                          if (!mounted) return;
+                          showMessage(context, error, false);
+                          return;
+                        }
+                        await loginProvider.reloadData();
+                        if (!mounted) return;
+                        Navigator.pushReplacement(
+                          context,
+                          FluentPageRoute(
+                            builder: (context) => const HomeScreen(),
                           ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:kintaikei_web/common/style.dart';
 
@@ -7,8 +7,8 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return const ScaffoldPage(
+      content: Center(
         child: SizedBox(
           width: 400,
           child: Column(

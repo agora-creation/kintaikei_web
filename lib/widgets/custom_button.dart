@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 
 class CustomButton extends StatelessWidget {
   final String label;
@@ -18,24 +18,19 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: TextButton(
+      child: FilledButton(
         onPressed: onPressed,
-        style: TextButton.styleFrom(
-          backgroundColor: backgroundColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(100),
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 16,
-          ),
+        style: ButtonStyle(
+          backgroundColor: ButtonState.all(backgroundColor),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: labelColor,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'SourceHanSansJP-Bold',
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: labelColor,
+              fontSize: 16,
+            ),
           ),
         ),
       ),
