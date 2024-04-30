@@ -19,9 +19,20 @@ FluentThemeData customTheme() {
     activeColor: kWhiteColor,
     cardColor: kWhiteColor,
     visualDensity: VisualDensity.adaptivePlatformDensity,
-    navigationPaneTheme: const NavigationPaneThemeData(
-      backgroundColor: kWhiteColor,
-      highlightColor: kBackgroundColor,
+    navigationPaneTheme: NavigationPaneThemeData(
+      backgroundColor: kMainColor,
+      overlayBackgroundColor: kWhiteColor,
+      highlightColor: kWhiteColor,
+      selectedTextStyle: ButtonState.all<TextStyle>(const TextStyle(
+        color: kWhiteColor,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'SourceHanSansJP-Bold',
+      )),
+      selectedIconColor: ButtonState.all(kWhiteColor),
+      unselectedTextStyle: ButtonState.all<TextStyle>(const TextStyle(
+        color: kWhiteColor,
+      )),
+      unselectedIconColor: ButtonState.all(kWhiteColor),
     ),
     checkboxTheme: CheckboxThemeData(
       checkedDecoration: ButtonState.all<Decoration>(
