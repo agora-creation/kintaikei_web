@@ -27,7 +27,7 @@ class _PlanShiftScreenState extends State<PlanShiftScreen> {
   Widget build(BuildContext context) {
     return Container(
       color: kWhiteColor,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       child: CustomShift(
         dataSource: _ShiftDataSource(source, resourceColl),
         onTap: (sfc.CalendarTapDetails details) {},

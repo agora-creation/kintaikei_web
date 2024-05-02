@@ -26,7 +26,7 @@ class _PlanScreenState extends State<PlanScreen> {
   Widget build(BuildContext context) {
     return Container(
       color: kWhiteColor,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       child: CustomCalendar(
         dataSource: _DataSource(appointments),
         onTap: (sfc.CalendarTapDetails details) {},
