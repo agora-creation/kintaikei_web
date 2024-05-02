@@ -1,6 +1,13 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
+import 'package:kintaikei_web/screens/apply.dart';
+import 'package:kintaikei_web/screens/plan.dart';
+import 'package:kintaikei_web/screens/plan_shift.dart';
+import 'package:kintaikei_web/screens/user.dart';
+import 'package:kintaikei_web/screens/work.dart';
+import 'package:kintaikei_web/widgets/home_header.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,20 +25,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return NavigationView(
       appBar: NavigationAppBar(
         automaticallyImplyLeading: false,
-        title: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '会社名',
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-          ),
+        title: HomeHeader(
+          loginProvider: loginProvider,
+          homeProvider: homeProvider,
         ),
       ),
       pane: NavigationPane(
+        size: const NavigationPaneSize(openMaxWidth: 200),
         selected: homeProvider.currentIndex,
         onChanged: (index) {
           homeProvider.currentIndexChange(index);
@@ -40,28 +40,83 @@ class _HomeScreenState extends State<HomeScreen> {
         items: [
           PaneItem(
             icon: const Icon(FluentIcons.event),
-            title: const Text('スケジュールカレンダー'),
-            body: Container(),
+            title: Text(
+              '予定表',
+              style: homeProvider.currentIndex == 0
+                  ? const TextStyle(color: kMainColor)
+                  : null,
+            ),
+            body: PlanScreen(
+              loginProvider: loginProvider,
+              homeProvider: homeProvider,
+            ),
+            tileColor: homeProvider.currentIndex == 0
+                ? ButtonState.all(kWhiteColor)
+                : null,
           ),
           PaneItem(
             icon: const Icon(FluentIcons.project_management),
-            title: const Text('シフト表'),
-            body: Container(),
+            title: Text(
+              'シフト表',
+              style: homeProvider.currentIndex == 1
+                  ? const TextStyle(color: kMainColor)
+                  : null,
+            ),
+            body: PlanShiftScreen(
+              loginProvider: loginProvider,
+              homeProvider: homeProvider,
+            ),
+            tileColor: homeProvider.currentIndex == 1
+                ? ButtonState.all(kWhiteColor)
+                : null,
           ),
           PaneItem(
             icon: const Icon(FluentIcons.running),
-            title: const Text('勤怠打刻'),
-            body: Container(),
+            title: Text(
+              '勤怠打刻',
+              style: homeProvider.currentIndex == 2
+                  ? const TextStyle(color: kMainColor)
+                  : null,
+            ),
+            body: WorkScreen(
+              loginProvider: loginProvider,
+              homeProvider: homeProvider,
+            ),
+            tileColor: homeProvider.currentIndex == 2
+                ? ButtonState.all(kWhiteColor)
+                : null,
           ),
           PaneItem(
             icon: const Icon(FluentIcons.group),
-            title: const Text('スタッフ'),
-            body: Container(),
+            title: Text(
+              'スタッフ',
+              style: homeProvider.currentIndex == 3
+                  ? const TextStyle(color: kMainColor)
+                  : null,
+            ),
+            body: UserScreen(
+              loginProvider: loginProvider,
+              homeProvider: homeProvider,
+            ),
+            tileColor: homeProvider.currentIndex == 3
+                ? ButtonState.all(kWhiteColor)
+                : null,
           ),
           PaneItem(
             icon: const Icon(FluentIcons.entitlement_redemption),
-            title: const Text('申請'),
-            body: Container(),
+            title: Text(
+              '申請',
+              style: homeProvider.currentIndex == 4
+                  ? const TextStyle(color: kMainColor)
+                  : null,
+            ),
+            body: ApplyScreen(
+              loginProvider: loginProvider,
+              homeProvider: homeProvider,
+            ),
+            tileColor: homeProvider.currentIndex == 4
+                ? ButtonState.all(kWhiteColor)
+                : null,
           ),
         ],
       ),

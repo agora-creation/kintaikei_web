@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
-const kBackgroundColor = Color(0xFFFFFFFF);
+const kBackgroundColor = Color(0xFF3949AB);
 const kMainColor = Color(0xFF3949AB);
 const kBlackColor = Color(0xFF333333);
 const kGreyColor = Color(0xFF9E9E9E);

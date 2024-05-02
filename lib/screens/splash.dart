@@ -19,6 +19,7 @@ class SplashScreen extends StatelessWidget {
                   Text(
                     '勤怠計',
                     style: TextStyle(
+                      color: kWhiteColor,
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'SourceHanSansJP-Bold',
@@ -28,6 +29,7 @@ class SplashScreen extends StatelessWidget {
                   Text(
                     '勤怠打刻サービス : 管理画面',
                     style: TextStyle(
+                      color: kWhiteColor,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
@@ -35,7 +37,7 @@ class SplashScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SpinKitPouringHourGlassRefined(color: kBlackColor),
+              SpinKitPouringHourGlassRefined(color: kWhiteColor),
             ],
           ),
         ),

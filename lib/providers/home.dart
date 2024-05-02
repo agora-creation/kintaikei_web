@@ -6,7 +6,6 @@ import 'package:kintaikei_web/services/company_group.dart';
 class HomeProvider with ChangeNotifier {
   int currentIndex = 0;
   final CompanyGroupService _groupService = CompanyGroupService();
-  List<CompanyGroupModel> groups = [];
   CompanyGroupModel? currentGroup;
 
   void currentIndexChange(int index) {
@@ -15,10 +14,8 @@ class HomeProvider with ChangeNotifier {
   }
 
   Future init({
-    required String companyId,
     CompanyGroupModel? group,
   }) async {
-    groups = await _groupService.selectList(companyId: companyId);
     currentGroup = group;
     notifyListeners();
   }
@@ -54,7 +51,6 @@ class HomeProvider with ChangeNotifier {
         'userIds': [],
         'createdAt': DateTime.now(),
       });
-      await init(companyId: company.id);
     } catch (e) {
       error = 'グループの追加に失敗しました';
     }
@@ -72,7 +68,6 @@ class HomeProvider with ChangeNotifier {
       _groupService.delete({
         'id': group.id,
       });
-      await init(companyId: company.id);
     } catch (e) {
       error = 'グループの削除に失敗しました';
     }

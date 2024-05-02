@@ -34,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     '勤怠計',
                     style: TextStyle(
+                      color: kWhiteColor,
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'SourceHanSansJP-Bold',
@@ -43,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     '勤怠打刻サービス : 管理画面',
                     style: TextStyle(
+                      color: kWhiteColor,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
@@ -52,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: kGrey300Color),
+                  color: kWhiteColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.all(16),
