@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
+import 'package:kintaikei_web/screens/plan_timeline.dart';
 import 'package:kintaikei_web/widgets/custom_calendar.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart' as sfc;
 
@@ -29,7 +30,18 @@ class _PlanScreenState extends State<PlanScreen> {
       padding: const EdgeInsets.all(8),
       child: CustomCalendar(
         dataSource: _DataSource(appointments),
-        onTap: (sfc.CalendarTapDetails details) {},
+        onTap: (sfc.CalendarTapDetails details) {
+          Navigator.push(
+            context,
+            FluentPageRoute(
+              builder: (context) => PlanTimelineScreen(
+                loginProvider: widget.loginProvider,
+                homeProvider: widget.homeProvider,
+                date: details.date ?? DateTime.now(),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:kintaikei_web/models/user.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
 import 'package:kintaikei_web/screens/user_source.dart';
+import 'package:kintaikei_web/services/user.dart';
 import 'package:kintaikei_web/widgets/custom_data_grid.dart';
 import 'package:kintaikei_web/widgets/custom_icon_button.dart';
 import 'package:kintaikei_web/widgets/data_column.dart';
@@ -24,7 +25,21 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> {
+  UserService userService = UserService();
   List<UserModel> users = [];
+
+  void _getUsers() async {
+    users = await userService.selectListToUserIds(
+      userIds: widget.homeProvider.currentGroup?.userIds ?? [],
+    );
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    _getUsers();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -13,9 +13,7 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future init({
-    CompanyGroupModel? group,
-  }) async {
+  Future init(CompanyGroupModel? group) async {
     currentGroup = group;
     notifyListeners();
   }
@@ -28,7 +26,6 @@ class HomeProvider with ChangeNotifier {
 
   void currentGroupClear() {
     currentIndex = 0;
-    currentGroup = null;
     notifyListeners();
   }
 

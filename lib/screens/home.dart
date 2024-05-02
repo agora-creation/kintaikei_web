@@ -118,6 +118,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? ButtonState.all(kWhiteColor)
                 : null,
           ),
+          PaneItem(
+            icon: const Icon(FluentIcons.settings),
+            title: Text(
+              'グループ設定',
+              style: homeProvider.currentIndex == 5
+                  ? const TextStyle(color: kMainColor)
+                  : null,
+            ),
+            body: Container(),
+            tileColor: homeProvider.currentIndex == 5
+                ? ButtonState.all(kWhiteColor)
+                : null,
+          ),
         ],
       ),
     );

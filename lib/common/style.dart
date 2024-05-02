@@ -79,7 +79,10 @@ List<int> kAlertMinutes = [0, 10, 30, 60];
 DateTime kFirstDate = DateTime.now().subtract(const Duration(days: 1095));
 DateTime kLastDate = DateTime.now().add(const Duration(days: 1095));
 
-const kDefaultGroupText = '勤務先の指定なし';
+const kHeaderDecoration = BoxDecoration(
+  color: kWhiteColor,
+  border: Border(bottom: BorderSide(color: kGrey300Color)),
+);
 
 const kIntroStyle = TextStyle(
   fontSize: 18,
