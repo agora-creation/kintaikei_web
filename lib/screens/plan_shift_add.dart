@@ -1,42 +1,58 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/common/functions.dart';
 import 'package:kintaikei_web/common/style.dart';
+import 'package:kintaikei_web/models/user.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
-import 'package:kintaikei_web/providers/plan.dart';
+import 'package:kintaikei_web/providers/plan_shift.dart';
 import 'package:kintaikei_web/services/date_time_picker.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
-import 'package:kintaikei_web/widgets/custom_text_box.dart';
+import 'package:kintaikei_web/widgets/custom_checkbox.dart';
 import 'package:kintaikei_web/widgets/datetime_range_form.dart';
+import 'package:kintaikei_web/widgets/repeat_select_form.dart';
 import 'package:provider/provider.dart';
 
-class PlanAddScreen extends StatefulWidget {
+class PlanShiftAddScreen extends StatefulWidget {
   final LoginProvider loginProvider;
   final HomeProvider homeProvider;
-  final DateTime date;
+  final List<UserModel> users;
+  final String userId;
+  final DateTime selectedDate;
 
-  const PlanAddScreen({
+  const PlanShiftAddScreen({
     required this.loginProvider,
     required this.homeProvider,
-    required this.date,
+    required this.users,
+    required this.userId,
+    required this.selectedDate,
     super.key,
   });
 
   @override
-  State<PlanAddScreen> createState() => _PlanAddScreenState();
+  State<PlanShiftAddScreen> createState() => _PlanShiftAddScreenState();
 }
 
-class _PlanAddScreenState extends State<PlanAddScreen> {
-  TextEditingController subjectController = TextEditingController();
+class _PlanShiftAddScreenState extends State<PlanShiftAddScreen> {
+  List<UserModel> selectedUsers = [];
   DateTime startedAt = DateTime.now();
   DateTime endedAt = DateTime.now();
   bool allDay = false;
-  Color color = kColors.first;
+  bool repeat = false;
+  String repeatInterval = kRepeatIntervals.first;
+  List<String> repeatWeeks = [];
   int alertMinute = kAlertMinutes[1];
 
   void _init() async {
-    startedAt = widget.date;
-    endedAt = startedAt.add(const Duration(hours: 1));
+    selectedUsers = [widget.users.singleWhere((e) => e.id == widget.userId)];
+    startedAt = DateTime(
+      widget.selectedDate.year,
+      widget.selectedDate.month,
+      widget.selectedDate.day,
+      8,
+      0,
+      0,
+    );
+    endedAt = startedAt.add(const Duration(hours: 8));
     setState(() {});
   }
 
@@ -71,7 +87,7 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final planProvider = Provider.of<PlanProvider>(context);
+    final planShiftProvider = Provider.of<PlanShiftProvider>(context);
     return ScaffoldPage(
       padding: EdgeInsets.zero,
       header: Container(
@@ -86,7 +102,7 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
                 onPressed: () => Navigator.pop(context),
               ),
               const Text(
-                '予定を新しく追加',
+                '勤務予定を新しく追加',
                 style: TextStyle(fontSize: 16),
               ),
               CustomButtonSm(
@@ -94,14 +110,16 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
                 labelColor: kWhiteColor,
                 backgroundColor: kBlueColor,
                 onPressed: () async {
-                  String? error = await planProvider.create(
+                  String? error = await planShiftProvider.create(
                     company: widget.loginProvider.company,
                     group: widget.homeProvider.currentGroup,
-                    subject: subjectController.text,
+                    users: selectedUsers,
                     startedAt: startedAt,
                     endedAt: endedAt,
                     allDay: allDay,
-                    color: color,
+                    repeat: repeat,
+                    repeatInterval: repeatInterval,
+                    repeatWeeks: repeatWeeks,
                     alertMinute: alertMinute,
                   );
                   if (error != null) {
@@ -110,7 +128,7 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
                     return;
                   }
                   if (!mounted) return;
-                  showMessage(context, '予定を追加しました', true);
+                  showMessage(context, '勤務予定を追加しました', true);
                   Navigator.pop(context);
                 },
               ),
@@ -130,24 +148,43 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InfoLabel(
-                  label: '件名',
-                  child: CustomTextBox(
-                    controller: subjectController,
-                    placeholder: '',
-                    keyboardType: TextInputType.text,
-                    maxLines: 1,
+                  label: '働くスタッフを選択(複数可)',
+                  child: Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: kGrey300Color),
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: widget.users.length,
+                      itemBuilder: (context, index) {
+                        UserModel user = widget.users[index];
+                        return CustomCheckbox(
+                          label: user.name,
+                          checked: selectedUsers.contains(user),
+                          onChanged: (value) {
+                            if (selectedUsers.contains(user)) {
+                              selectedUsers.remove(user);
+                            } else {
+                              selectedUsers.add(user);
+                            }
+                            setState(() {});
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
                 InfoLabel(
-                  label: '予定時間帯を設定',
+                  label: '働く時間帯を設定',
                   child: DatetimeRangeForm(
                     startedAt: startedAt,
                     startedOnTap: () async =>
                         await DateTimePickerService().picker(
                       context: context,
                       init: startedAt,
-                      title: '予定開始日時を選択',
+                      title: '勤務予定開始日時を選択',
                       onChanged: (value) {
                         setState(() {
                           startedAt = value;
@@ -160,7 +197,7 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
                         await DateTimePickerService().picker(
                       context: context,
                       init: endedAt,
-                      title: '予定終了日時を選択',
+                      title: '勤務予定終了日時を選択',
                       onChanged: (value) {
                         setState(() {
                           endedAt = value;
@@ -177,23 +214,28 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
                   content: Column(
                     children: [
                       InfoLabel(
-                        label: '色',
-                        child: ComboBox<Color>(
-                          isExpanded: true,
-                          value: color,
-                          items: kColors.map((value) {
-                            return ComboBoxItem(
-                              value: value,
-                              child: Container(
-                                color: value,
-                                height: 25,
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
+                        label: '繰り返し設定',
+                        child: RepeatSelectForm(
+                          repeat: repeat,
+                          repeatOnChanged: (value) {
                             setState(() {
-                              color = value!;
+                              repeat = value!;
                             });
+                          },
+                          interval: repeatInterval,
+                          intervalOnChanged: (value) {
+                            setState(() {
+                              repeatInterval = value;
+                            });
+                          },
+                          weeks: repeatWeeks,
+                          weeksOnChanged: (value) {
+                            if (repeatWeeks.contains(value)) {
+                              repeatWeeks.remove(value);
+                            } else {
+                              repeatWeeks.add(value);
+                            }
+                            setState(() {});
                           },
                         ),
                       ),

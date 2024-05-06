@@ -33,7 +33,7 @@ class CustomButtonSm extends StatelessWidget {
                     color: labelColor,
                     size: 14,
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 8),
                   Text(
                     labelText,
                     style: TextStyle(

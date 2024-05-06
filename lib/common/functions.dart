@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:intl/intl.dart';
 
@@ -106,4 +107,14 @@ String subTime(String left, String right) {
   double h = diffM / 60;
   int m = diffM % 60;
   return '${twoDigits(h.toInt())}:${twoDigits(m)}';
+}
+
+Timestamp convertTimestamp(DateTime date, bool end) {
+  String dateTime = '${convertDateText('yyyy-MM-dd', date)} 00:00:00.000';
+  if (end == true) {
+    dateTime = '${convertDateText('yyyy-MM-dd', date)} 23:59:59.999';
+  }
+  return Timestamp.fromMillisecondsSinceEpoch(
+    DateTime.parse(dateTime).millisecondsSinceEpoch,
+  );
 }

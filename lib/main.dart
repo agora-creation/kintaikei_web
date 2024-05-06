@@ -5,6 +5,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
+import 'package:kintaikei_web/providers/plan.dart';
+import 'package:kintaikei_web/providers/plan_shift.dart';
 import 'package:kintaikei_web/screens/home.dart';
 import 'package:kintaikei_web/screens/login.dart';
 import 'package:kintaikei_web/screens/splash.dart';
@@ -43,6 +45,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: LoginProvider.initialize()),
         ChangeNotifierProvider.value(value: HomeProvider()),
+        ChangeNotifierProvider.value(value: PlanProvider()),
+        ChangeNotifierProvider.value(value: PlanShiftProvider()),
       ],
       child: FluentApp(
         debugShowCheckedModeBanner: false,

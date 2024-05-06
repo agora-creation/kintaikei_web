@@ -5,8 +5,8 @@ import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
 import 'package:kintaikei_web/screens/user_source.dart';
 import 'package:kintaikei_web/services/user.dart';
+import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_data_grid.dart';
-import 'package:kintaikei_web/widgets/custom_icon_button.dart';
 import 'package:kintaikei_web/widgets/data_column.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -53,11 +53,24 @@ class _UserScreenState extends State<UserScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(),
-              CustomIconButton(
-                icon: FluentIcons.add,
-                iconColor: kWhiteColor,
-                backgroundColor: kBlueColor,
-                onPressed: () {},
+              Row(
+                children: [
+                  CustomButtonSm(
+                    icon: FluentIcons.profile_search,
+                    labelText: 'メールアドレスから加入',
+                    labelColor: kWhiteColor,
+                    backgroundColor: kBlueColor,
+                    onPressed: () {},
+                  ),
+                  const SizedBox(width: 4),
+                  CustomButtonSm(
+                    icon: FluentIcons.add,
+                    labelText: '新規加入',
+                    labelColor: kWhiteColor,
+                    backgroundColor: kBlueColor,
+                    onPressed: () {},
+                  ),
+                ],
               ),
             ],
           ),

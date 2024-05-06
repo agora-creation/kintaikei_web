@@ -3,6 +3,7 @@ import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
 import 'package:kintaikei_web/screens/apply.dart';
+import 'package:kintaikei_web/screens/group.dart';
 import 'package:kintaikei_web/screens/plan.dart';
 import 'package:kintaikei_web/screens/plan_shift.dart';
 import 'package:kintaikei_web/screens/user.dart';
@@ -126,7 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? const TextStyle(color: kMainColor)
                   : null,
             ),
-            body: Container(),
+            body: GroupScreen(
+              loginProvider: loginProvider,
+              homeProvider: homeProvider,
+            ),
             tileColor: homeProvider.currentIndex == 5
                 ? ButtonState.all(kWhiteColor)
                 : null,

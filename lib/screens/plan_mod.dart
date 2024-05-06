@@ -1,32 +1,36 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/common/functions.dart';
 import 'package:kintaikei_web/common/style.dart';
+import 'package:kintaikei_web/models/plan.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
 import 'package:kintaikei_web/providers/plan.dart';
 import 'package:kintaikei_web/services/date_time_picker.dart';
+import 'package:kintaikei_web/services/plan.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_text_box.dart';
 import 'package:kintaikei_web/widgets/datetime_range_form.dart';
+import 'package:kintaikei_web/widgets/link_text.dart';
 import 'package:provider/provider.dart';
 
-class PlanAddScreen extends StatefulWidget {
+class PlanModScreen extends StatefulWidget {
   final LoginProvider loginProvider;
   final HomeProvider homeProvider;
-  final DateTime date;
+  final String planId;
 
-  const PlanAddScreen({
+  const PlanModScreen({
     required this.loginProvider,
     required this.homeProvider,
-    required this.date,
+    required this.planId,
     super.key,
   });
 
   @override
-  State<PlanAddScreen> createState() => _PlanAddScreenState();
+  State<PlanModScreen> createState() => _PlanModScreenState();
 }
 
-class _PlanAddScreenState extends State<PlanAddScreen> {
+class _PlanModScreenState extends State<PlanModScreen> {
+  PlanService planService = PlanService();
   TextEditingController subjectController = TextEditingController();
   DateTime startedAt = DateTime.now();
   DateTime endedAt = DateTime.now();
@@ -35,8 +39,19 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
   int alertMinute = kAlertMinutes[1];
 
   void _init() async {
-    startedAt = widget.date;
-    endedAt = startedAt.add(const Duration(hours: 1));
+    PlanModel? plan = await planService.selectDataToId(id: widget.planId);
+    if (plan == null) {
+      if (!mounted) return;
+      showMessage(context, '予定データの取得に失敗しました', false);
+      Navigator.of(context, rootNavigator: true).pop();
+      return;
+    }
+    subjectController.text = plan.subject;
+    startedAt = plan.startedAt;
+    endedAt = plan.endedAt;
+    allDay = plan.allDay;
+    color = plan.color;
+    alertMinute = plan.alertMinute;
     setState(() {});
   }
 
@@ -86,17 +101,16 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
                 onPressed: () => Navigator.pop(context),
               ),
               const Text(
-                '予定を新しく追加',
+                '予定を編集',
                 style: TextStyle(fontSize: 16),
               ),
               CustomButtonSm(
-                labelText: '下記内容を追加する',
+                labelText: '下記内容を保存する',
                 labelColor: kWhiteColor,
                 backgroundColor: kBlueColor,
                 onPressed: () async {
-                  String? error = await planProvider.create(
-                    company: widget.loginProvider.company,
-                    group: widget.homeProvider.currentGroup,
+                  String? error = await planProvider.update(
+                    id: widget.planId,
                     subject: subjectController.text,
                     startedAt: startedAt,
                     endedAt: endedAt,
@@ -110,7 +124,7 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
                     return;
                   }
                   if (!mounted) return;
-                  showMessage(context, '予定を追加しました', true);
+                  showMessage(context, '予定を編集しました', true);
                   Navigator.pop(context);
                 },
               ),
@@ -221,11 +235,89 @@ class _PlanAddScreenState extends State<PlanAddScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 16),
+                LinkText(
+                  label: 'この予定を削除する',
+                  color: kRedColor,
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) => DelPlanDialog(
+                      loginProvider: widget.loginProvider,
+                      homeProvider: widget.homeProvider,
+                      planId: widget.planId,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class DelPlanDialog extends StatefulWidget {
+  final LoginProvider loginProvider;
+  final HomeProvider homeProvider;
+  final String planId;
+
+  const DelPlanDialog({
+    required this.loginProvider,
+    required this.homeProvider,
+    required this.planId,
+    super.key,
+  });
+
+  @override
+  State<DelPlanDialog> createState() => _DelPlanDialogState();
+}
+
+class _DelPlanDialogState extends State<DelPlanDialog> {
+  @override
+  Widget build(BuildContext context) {
+    final planProvider = Provider.of<PlanProvider>(context);
+    return ContentDialog(
+      title: const Text(
+        '予定を削除',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: const SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(child: Text('本当に削除しますか？')),
+          ],
+        ),
+      ),
+      actions: [
+        CustomButtonSm(
+          labelText: 'キャンセル',
+          labelColor: kWhiteColor,
+          backgroundColor: kGreyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButtonSm(
+          labelText: '削除する',
+          labelColor: kWhiteColor,
+          backgroundColor: kRedColor,
+          onPressed: () async {
+            String? error = await planProvider.delete(
+              id: widget.planId,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            if (!mounted) return;
+            showMessage(context, '予定を削除しました', true);
+            Navigator.pop(context);
+            Navigator.of(context, rootNavigator: true).pop();
+          },
+        ),
+      ],
     );
   }
 }

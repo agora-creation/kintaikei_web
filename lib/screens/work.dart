@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
-import 'package:kintaikei_web/widgets/custom_icon_button.dart';
+import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 
 class WorkScreen extends StatefulWidget {
   final LoginProvider loginProvider;
@@ -31,9 +31,10 @@ class _WorkScreenState extends State<WorkScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(),
-              CustomIconButton(
+              CustomButtonSm(
                 icon: FluentIcons.add,
-                iconColor: kWhiteColor,
+                labelText: '手入力で追加',
+                labelColor: kWhiteColor,
                 backgroundColor: kBlueColor,
                 onPressed: () {},
               ),
