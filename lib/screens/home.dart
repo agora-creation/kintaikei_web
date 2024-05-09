@@ -38,6 +38,13 @@ class _HomeScreenState extends State<HomeScreen> {
           homeProvider.currentIndexChange(index);
         },
         displayMode: PaneDisplayMode.open,
+        header: const Text(
+          'メニュー',
+          style: TextStyle(
+            color: kWhiteColor,
+            fontSize: 12,
+          ),
+        ),
         items: [
           PaneItem(
             icon: const Icon(FluentIcons.event),
@@ -74,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           PaneItem(
             icon: const Icon(FluentIcons.running),
             title: Text(
-              '勤怠打刻',
+              '勤怠打刻の管理',
               style: homeProvider.currentIndex == 2
                   ? const TextStyle(color: kMainColor)
                   : null,
@@ -90,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
           PaneItem(
             icon: const Icon(FluentIcons.group),
             title: Text(
-              'スタッフ',
+              'スタッフの管理',
               style: homeProvider.currentIndex == 3
                   ? const TextStyle(color: kMainColor)
                   : null,
@@ -106,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
           PaneItem(
             icon: const Icon(FluentIcons.entitlement_redemption),
             title: Text(
-              '申請',
+              '申請の管理',
               style: homeProvider.currentIndex == 4
                   ? const TextStyle(color: kMainColor)
                   : null,
@@ -122,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
           PaneItem(
             icon: const Icon(FluentIcons.settings),
             title: Text(
-              'グループ設定',
+              'グループの設定',
               style: homeProvider.currentIndex == 5
                   ? const TextStyle(color: kMainColor)
                   : null,

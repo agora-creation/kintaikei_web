@@ -2,7 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
-import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_text_box.dart';
 import 'package:kintaikei_web/widgets/link_text.dart';
 
@@ -29,20 +28,6 @@ class _GroupScreenState extends State<GroupScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(),
-              CustomButtonSm(
-                icon: FluentIcons.save,
-                labelText: '下記内容で保存する',
-                labelColor: kWhiteColor,
-                backgroundColor: kBlueColor,
-                onPressed: () {},
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
           InfoLabel(
             label: 'グループ名',
             child: CustomTextBox(

@@ -87,16 +87,12 @@ class _HomeHeaderState extends State<HomeHeader> {
               ),
             ],
           ),
-          CustomIconButton(
-            icon: FluentIcons.sign_out,
-            iconColor: kBlackColor,
+          CustomButtonSm(
+            icon: FluentIcons.settings,
+            labelText: '会社の設定',
+            labelColor: kBlackColor,
             backgroundColor: kWhiteColor,
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => LogoutDialog(
-                loginProvider: widget.loginProvider,
-              ),
-            ),
+            onPressed: () {},
           ),
         ],
       ),
