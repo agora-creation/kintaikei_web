@@ -46,22 +46,25 @@ class UserSource extends DataGridSource {
     cells.add(DataColumn(user.name));
     cells.add(DataColumn(user.email));
     cells.add(DataColumn(user.password));
-    cells.add(Row(
-      children: [
-        CustomButtonSm(
-          labelText: '編集',
-          labelColor: kWhiteColor,
-          backgroundColor: kBlueColor,
-          onPressed: () {},
-        ),
-        const SizedBox(width: 4),
-        CustomButtonSm(
-          labelText: '退社',
-          labelColor: kWhiteColor,
-          backgroundColor: kRedColor,
-          onPressed: () {},
-        ),
-      ],
+    cells.add(Padding(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        children: [
+          CustomButtonSm(
+            labelText: '編集',
+            labelColor: kWhiteColor,
+            backgroundColor: kBlueColor,
+            onPressed: () {},
+          ),
+          const SizedBox(width: 8),
+          CustomButtonSm(
+            labelText: '退社',
+            labelColor: kWhiteColor,
+            backgroundColor: kRedColor,
+            onPressed: () {},
+          ),
+        ],
+      ),
     ));
     return DataGridRowAdapter(color: backgroundColor, cells: cells);
   }

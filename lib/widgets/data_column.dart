@@ -5,11 +5,13 @@ class DataColumn extends StatelessWidget {
   final String label;
   final Color labelColor;
   final Color backgroundColor;
+  final Alignment alignment;
 
   const DataColumn(
     this.label, {
     this.labelColor = kBlackColor,
     this.backgroundColor = Colors.transparent,
+    this.alignment = Alignment.centerLeft,
     super.key,
   });
 
@@ -17,8 +19,8 @@ class DataColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: backgroundColor,
-      padding: const EdgeInsets.all(4),
-      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.all(8),
+      alignment: alignment,
       child: Text(
         label,
         style: TextStyle(color: labelColor),

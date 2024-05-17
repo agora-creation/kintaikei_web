@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   Text(
-                    '勤怠打刻サービス : 管理画面',
+                    '会社用ダッシュボード',
                     style: TextStyle(
                       color: kWhiteColor,
                       fontSize: 18,
@@ -60,6 +60,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
+                    const Text('会社の管理者がログインしましょう'),
+                    const SizedBox(height: 16),
                     CustomTextBox(
                       controller: loginIdController,
                       placeholder: 'ログインID',

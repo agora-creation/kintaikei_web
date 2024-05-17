@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
         ],
         supportedLocales: const [Locale('ja')],
         locale: const Locale('ja'),
-        title: '勤怠計 - 管理画面',
+        title: '勤怠計 - 会社用ダッシュボード',
         theme: customTheme(),
         home: const SplashController(),
       ),

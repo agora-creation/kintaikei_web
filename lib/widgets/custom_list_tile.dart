@@ -4,14 +4,14 @@ import 'package:kintaikei_web/common/style.dart';
 class CustomListTile extends StatelessWidget {
   final String label;
   final String value;
-  final IconData icon;
+  final IconData? icon;
   final Function()? onTap;
   final bool isFirst;
 
   const CustomListTile({
     required this.label,
     required this.value,
-    required this.icon,
+    this.icon,
     this.onTap,
     this.isFirst = true,
     super.key,
@@ -49,7 +49,7 @@ class CustomListTile extends StatelessWidget {
                 ),
               ],
             ),
-            Icon(icon),
+            icon != null ? Icon(icon) : Container(),
           ],
         ),
       ),

@@ -27,7 +27,7 @@ class SplashScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '勤怠打刻サービス : 管理画面',
+                    '会社用ダッシュボード',
                     style: TextStyle(
                       color: kWhiteColor,
                       fontSize: 18,

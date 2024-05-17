@@ -3,11 +3,13 @@ import 'package:fluent_ui/fluent_ui.dart';
 class DataColumnLink extends StatelessWidget {
   final String label;
   final Color color;
+  final Alignment alignment;
   final Function()? onTap;
 
   const DataColumnLink({
     required this.label,
     required this.color,
+    this.alignment = Alignment.centerLeft,
     this.onTap,
     super.key,
   });
@@ -17,8 +19,8 @@ class DataColumnLink extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(4),
-        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.all(8),
+        alignment: alignment,
         child: Container(
           decoration: BoxDecoration(
             border: Border(

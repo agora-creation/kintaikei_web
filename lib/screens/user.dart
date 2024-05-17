@@ -45,7 +45,7 @@ class _UserScreenState extends State<UserScreen> {
   Widget build(BuildContext context) {
     return Container(
       color: kWhiteColor,
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -62,7 +62,7 @@ class _UserScreenState extends State<UserScreen> {
                     backgroundColor: kBlueColor,
                     onPressed: () {},
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 8),
                   CustomButtonSm(
                     icon: FluentIcons.add,
                     labelText: '新規加入',
@@ -74,7 +74,7 @@ class _UserScreenState extends State<UserScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           Expanded(
             child: CustomDataGrid(
               source: UserSource(

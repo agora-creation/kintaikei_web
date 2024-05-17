@@ -23,7 +23,7 @@ class _WorkScreenState extends State<WorkScreen> {
   Widget build(BuildContext context) {
     return Container(
       color: kWhiteColor,
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

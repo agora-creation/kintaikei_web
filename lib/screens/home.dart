@@ -2,7 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
-import 'package:kintaikei_web/screens/apply.dart';
 import 'package:kintaikei_web/screens/group.dart';
 import 'package:kintaikei_web/screens/plan.dart';
 import 'package:kintaikei_web/screens/plan_shift.dart';
@@ -47,14 +46,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         items: [
           PaneItem(
-            icon: const Icon(FluentIcons.event),
+            icon: const Icon(FluentIcons.view_list),
             title: Text(
-              '予定表',
+              '勤怠打刻',
               style: homeProvider.currentIndex == 0
                   ? const TextStyle(color: kMainColor)
                   : null,
             ),
-            body: PlanScreen(
+            body: WorkScreen(
               loginProvider: loginProvider,
               homeProvider: homeProvider,
             ),
@@ -63,14 +62,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 : null,
           ),
           PaneItem(
-            icon: const Icon(FluentIcons.project_management),
+            icon: const Icon(FluentIcons.table),
             title: Text(
-              'シフト表',
+              '予定表',
               style: homeProvider.currentIndex == 1
                   ? const TextStyle(color: kMainColor)
                   : null,
             ),
-            body: PlanShiftScreen(
+            body: PlanScreen(
               loginProvider: loginProvider,
               homeProvider: homeProvider,
             ),
@@ -79,14 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 : null,
           ),
           PaneItem(
-            icon: const Icon(FluentIcons.running),
+            icon: const Icon(FluentIcons.table_first_column),
             title: Text(
-              '勤怠打刻の管理',
+              'シフト表',
               style: homeProvider.currentIndex == 2
                   ? const TextStyle(color: kMainColor)
                   : null,
             ),
-            body: WorkScreen(
+            body: PlanShiftScreen(
               loginProvider: loginProvider,
               homeProvider: homeProvider,
             ),
@@ -95,9 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 : null,
           ),
           PaneItem(
-            icon: const Icon(FluentIcons.group),
+            icon: const Icon(FluentIcons.contact),
             title: Text(
-              'スタッフの管理',
+              '所属スタッフ',
               style: homeProvider.currentIndex == 3
                   ? const TextStyle(color: kMainColor)
                   : null,
@@ -111,26 +110,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 : null,
           ),
           PaneItem(
-            icon: const Icon(FluentIcons.entitlement_redemption),
+            icon: const Icon(FluentIcons.engineering_group),
             title: Text(
-              '申請の管理',
+              'グループ情報',
               style: homeProvider.currentIndex == 4
-                  ? const TextStyle(color: kMainColor)
-                  : null,
-            ),
-            body: ApplyScreen(
-              loginProvider: loginProvider,
-              homeProvider: homeProvider,
-            ),
-            tileColor: homeProvider.currentIndex == 4
-                ? ButtonState.all(kWhiteColor)
-                : null,
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.settings),
-            title: Text(
-              'グループの設定',
-              style: homeProvider.currentIndex == 5
                   ? const TextStyle(color: kMainColor)
                   : null,
             ),
@@ -138,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
               loginProvider: loginProvider,
               homeProvider: homeProvider,
             ),
-            tileColor: homeProvider.currentIndex == 5
+            tileColor: homeProvider.currentIndex == 4
                 ? ButtonState.all(kWhiteColor)
                 : null,
           ),

@@ -8,6 +8,7 @@ import 'package:kintaikei_web/screens/login.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_icon_button.dart';
 import 'package:kintaikei_web/widgets/custom_text_box.dart';
+import 'package:kintaikei_web/widgets/disabled_box.dart';
 
 class HomeHeader extends StatefulWidget {
   final LoginProvider loginProvider;
@@ -72,7 +73,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                   popupColor: kWhiteColor,
                 ),
               ),
-              const SizedBox(width: 2),
+              const SizedBox(width: 4),
               CustomIconButton(
                 icon: FluentIcons.add,
                 iconColor: kBlackColor,
@@ -88,8 +89,8 @@ class _HomeHeaderState extends State<HomeHeader> {
             ],
           ),
           CustomButtonSm(
-            icon: FluentIcons.settings,
-            labelText: '会社の設定',
+            icon: FluentIcons.emi,
+            labelText: '会社情報',
             labelColor: kBlackColor,
             backgroundColor: kWhiteColor,
             onPressed: () {},
@@ -138,6 +139,21 @@ class _AddGroupDialogState extends State<AddGroupDialog> {
                 maxLines: 1,
               ),
             ),
+            const SizedBox(height: 8),
+            InfoLabel(
+              label: 'ログインID',
+              child: DisabledBox('aaa'),
+            ),
+            const SizedBox(height: 8),
+            InfoLabel(
+              label: 'パスワード',
+              child: CustomTextBox(
+                controller: TextEditingController(),
+                placeholder: '',
+                keyboardType: TextInputType.text,
+                maxLines: 1,
+              ),
+            ),
           ],
         ),
       ),
@@ -149,7 +165,7 @@ class _AddGroupDialogState extends State<AddGroupDialog> {
           onPressed: () => Navigator.pop(context),
         ),
         CustomButtonSm(
-          labelText: '追加する',
+          labelText: '上記内容で追加する',
           labelColor: kWhiteColor,
           backgroundColor: kBlueColor,
           onPressed: () async {

@@ -71,7 +71,7 @@ class _PlanShiftScreenState extends State<PlanShiftScreen> {
     );
     return Container(
       color: kWhiteColor,
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16),
       child: StreamBuilder2<QuerySnapshot<Map<String, dynamic>>,
           QuerySnapshot<Map<String, dynamic>>>(
         streams: StreamTuple2(streamPlan!, streamPlanShift!),

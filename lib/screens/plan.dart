@@ -29,7 +29,7 @@ class _PlanScreenState extends State<PlanScreen> {
   Widget build(BuildContext context) {
     return Container(
       color: kWhiteColor,
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16),
       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: planService.streamList(
           companyId: widget.loginProvider.company?.id,
