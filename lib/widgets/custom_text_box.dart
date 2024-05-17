@@ -35,7 +35,7 @@ class CustomTextBox extends StatelessWidget {
       onChanged: onChanged,
       enabled: enabled,
       decoration: BoxDecoration(
-        color: kGrey300Color,
+        color: kGrey300Color.withOpacity(0.3),
         border: Border.all(color: kGrey300Color),
       ),
     );

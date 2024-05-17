@@ -31,20 +31,24 @@ class HomeProvider with ChangeNotifier {
 
   Future<String?> groupCreate({
     required CompanyModel? company,
+    required int index,
     required String name,
+    required String password,
   }) async {
     String? error;
     if (company == null) return 'グループの追加に失敗しました';
     if (name == '') return 'グループ名を入力してください';
+    if (password == '') return 'パスワードを入力してください';
     try {
       String id = _groupService.id();
       _groupService.create({
         'id': id,
         'companyId': company.id,
         'companyName': company.name,
+        'index': index,
         'name': name,
-        'loginId': '',
-        'password': '',
+        'loginId': '${company.loginId}-$index',
+        'password': password,
         'userIds': [],
         'createdAt': DateTime.now(),
       });
@@ -54,12 +58,46 @@ class HomeProvider with ChangeNotifier {
     return error;
   }
 
+  Future<String?> groupNameUpdate({
+    required CompanyGroupModel? group,
+    required String name,
+  }) async {
+    String? error;
+    if (group == null) return 'グループ名の変更に失敗しました';
+    if (name == '') return 'グループ名を入力してください';
+    try {
+      _groupService.update({
+        'id': group.id,
+        'name': name,
+      });
+    } catch (e) {
+      error = 'グループ名の変更に失敗しました';
+    }
+    return error;
+  }
+
+  Future<String?> groupPasswordUpdate({
+    required CompanyGroupModel? group,
+    required String password,
+  }) async {
+    String? error;
+    if (group == null) return 'パスワードの変更に失敗しました';
+    if (password == '') return 'パスワードを入力してください';
+    try {
+      _groupService.update({
+        'id': group.id,
+        'password': password,
+      });
+    } catch (e) {
+      error = 'パスワードの変更に失敗しました';
+    }
+    return error;
+  }
+
   Future<String?> groupDelete({
-    required CompanyModel? company,
     required CompanyGroupModel? group,
   }) async {
     String? error;
-    if (company == null) return 'グループの削除に失敗しました';
     if (group == null) return 'グループの削除に失敗しました';
     try {
       _groupService.delete({

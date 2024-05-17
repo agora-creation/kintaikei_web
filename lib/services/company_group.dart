@@ -28,7 +28,7 @@ class CompanyGroupService {
     await firestore
         .collection(collection)
         .where('companyId', isEqualTo: companyId)
-        .orderBy('createdAt', descending: false)
+        .orderBy('index', descending: false)
         .get()
         .then((value) {
       for (DocumentSnapshot<Map<String, dynamic>> map in value.docs) {

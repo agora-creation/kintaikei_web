@@ -3,105 +3,132 @@ import 'package:kintaikei_web/common/functions.dart';
 import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
+import 'package:kintaikei_web/screens/login.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_list_tile.dart';
 import 'package:kintaikei_web/widgets/custom_text_box.dart';
-import 'package:kintaikei_web/widgets/disabled_box.dart';
 import 'package:kintaikei_web/widgets/link_text.dart';
 
-class GroupScreen extends StatefulWidget {
+class CompanyScreen extends StatefulWidget {
   final LoginProvider loginProvider;
   final HomeProvider homeProvider;
 
-  const GroupScreen({
+  const CompanyScreen({
     required this.loginProvider,
     required this.homeProvider,
     super.key,
   });
 
   @override
-  State<GroupScreen> createState() => _GroupScreenState();
+  State<CompanyScreen> createState() => _CompanyScreenState();
 }
 
-class _GroupScreenState extends State<GroupScreen> {
+class _CompanyScreenState extends State<CompanyScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: kWhiteColor,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomListTile(
-            label: 'グループ名',
-            value: widget.homeProvider.currentGroup?.name ?? '',
-            icon: FluentIcons.edit,
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => ModGroupNameDialog(
-                loginProvider: widget.loginProvider,
-                homeProvider: widget.homeProvider,
+    return ScaffoldPage(
+      padding: EdgeInsets.zero,
+      header: Container(
+        decoration: kHeaderDecoration,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(FluentIcons.chevron_left),
+                onPressed: () => Navigator.pop(context),
               ),
-            ),
-          ),
-          CustomListTile(
-            label: 'ログインID',
-            value: widget.homeProvider.currentGroup?.loginId ?? '',
-            isFirst: false,
-          ),
-          CustomListTile(
-            label: 'パスワード',
-            value: '********',
-            icon: FluentIcons.edit,
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => ModGroupPasswordDialog(
-                loginProvider: widget.loginProvider,
-                homeProvider: widget.homeProvider,
+              const Text(
+                '会社情報',
+                style: TextStyle(fontSize: 16),
               ),
-            ),
-            isFirst: false,
+              Container(),
+            ],
           ),
-          const SizedBox(height: 16),
-          widget.homeProvider.currentGroup?.index != 0
-              ? LinkText(
-                  label: 'このグループを削除',
-                  color: kRedColor,
+        ),
+      ),
+      content: Container(
+        color: kWhiteColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 200,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomListTile(
+                  label: '会社名',
+                  value: widget.loginProvider.company?.name ?? '',
+                  icon: FluentIcons.edit,
                   onTap: () => showDialog(
                     context: context,
-                    builder: (context) => DelGroupDialog(
+                    builder: (context) => ModNameDialog(
                       loginProvider: widget.loginProvider,
                       homeProvider: widget.homeProvider,
                     ),
                   ),
-                )
-              : Container(),
-        ],
+                ),
+                CustomListTile(
+                  label: 'ログインID',
+                  value: widget.loginProvider.company?.loginId ?? '',
+                  isFirst: false,
+                ),
+                CustomListTile(
+                  label: 'パスワード',
+                  value: '********',
+                  icon: FluentIcons.edit,
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) => ModPasswordDialog(
+                      loginProvider: widget.loginProvider,
+                      homeProvider: widget.homeProvider,
+                    ),
+                  ),
+                  isFirst: false,
+                ),
+                const SizedBox(height: 16),
+                LinkText(
+                  label: 'ログアウト',
+                  color: kRedColor,
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) => LogoutDialog(
+                      loginProvider: widget.loginProvider,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 }
 
-class ModGroupNameDialog extends StatefulWidget {
+class ModNameDialog extends StatefulWidget {
   final LoginProvider loginProvider;
   final HomeProvider homeProvider;
 
-  const ModGroupNameDialog({
+  const ModNameDialog({
     required this.loginProvider,
     required this.homeProvider,
     super.key,
   });
 
   @override
-  State<ModGroupNameDialog> createState() => _ModGroupNameDialogState();
+  State<ModNameDialog> createState() => _ModNameDialogState();
 }
 
-class _ModGroupNameDialogState extends State<ModGroupNameDialog> {
+class _ModNameDialogState extends State<ModNameDialog> {
   TextEditingController nameController = TextEditingController();
 
   @override
   void initState() {
-    nameController.text = widget.homeProvider.currentGroup?.name ?? '';
+    nameController.text = widget.loginProvider.company?.name ?? '';
     super.initState();
   }
 
@@ -109,7 +136,7 @@ class _ModGroupNameDialogState extends State<ModGroupNameDialog> {
   Widget build(BuildContext context) {
     return ContentDialog(
       title: const Text(
-        'グループ名を変更',
+        '会社名を変更',
         style: TextStyle(fontSize: 18),
       ),
       content: SingleChildScrollView(
@@ -118,7 +145,7 @@ class _ModGroupNameDialogState extends State<ModGroupNameDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             InfoLabel(
-              label: 'グループ名',
+              label: '会社名',
               child: CustomTextBox(
                 controller: nameController,
                 placeholder: '',
@@ -141,8 +168,8 @@ class _ModGroupNameDialogState extends State<ModGroupNameDialog> {
           labelColor: kWhiteColor,
           backgroundColor: kBlueColor,
           onPressed: () async {
-            String? error = await widget.homeProvider.groupNameUpdate(
-              group: widget.homeProvider.currentGroup,
+            String? error = await widget.loginProvider.nameUpdate(
+              company: widget.loginProvider.company,
               name: nameController.text,
             );
             if (error != null) {
@@ -151,11 +178,9 @@ class _ModGroupNameDialogState extends State<ModGroupNameDialog> {
               return;
             }
             await widget.loginProvider.reloadData();
-            widget.homeProvider.currentGroupChange(
-              widget.homeProvider.currentGroup,
-            );
+            widget.homeProvider.currentGroupClear();
             if (!mounted) return;
-            showMessage(context, 'グループ名を変更しました', true);
+            showMessage(context, '会社名を変更しました', true);
             Navigator.pop(context);
           },
         ),
@@ -164,21 +189,21 @@ class _ModGroupNameDialogState extends State<ModGroupNameDialog> {
   }
 }
 
-class ModGroupPasswordDialog extends StatefulWidget {
+class ModPasswordDialog extends StatefulWidget {
   final LoginProvider loginProvider;
   final HomeProvider homeProvider;
 
-  const ModGroupPasswordDialog({
+  const ModPasswordDialog({
     required this.loginProvider,
     required this.homeProvider,
     super.key,
   });
 
   @override
-  State<ModGroupPasswordDialog> createState() => _ModGroupPasswordDialogState();
+  State<ModPasswordDialog> createState() => _ModPasswordDialogState();
 }
 
-class _ModGroupPasswordDialogState extends State<ModGroupPasswordDialog> {
+class _ModPasswordDialogState extends State<ModPasswordDialog> {
   TextEditingController passwordController = TextEditingController();
 
   @override
@@ -218,8 +243,8 @@ class _ModGroupPasswordDialogState extends State<ModGroupPasswordDialog> {
           labelColor: kWhiteColor,
           backgroundColor: kBlueColor,
           onPressed: () async {
-            String? error = await widget.homeProvider.groupPasswordUpdate(
-              group: widget.homeProvider.currentGroup,
+            String? error = await widget.loginProvider.passwordUpdate(
+              company: widget.loginProvider.company,
               password: passwordController.text,
             );
             if (error != null) {
@@ -228,9 +253,7 @@ class _ModGroupPasswordDialogState extends State<ModGroupPasswordDialog> {
               return;
             }
             await widget.loginProvider.reloadData();
-            widget.homeProvider.currentGroupChange(
-              widget.homeProvider.currentGroup,
-            );
+            widget.homeProvider.currentGroupClear();
             if (!mounted) return;
             showMessage(context, 'パスワードを変更しました', true);
             Navigator.pop(context);
@@ -241,39 +264,32 @@ class _ModGroupPasswordDialogState extends State<ModGroupPasswordDialog> {
   }
 }
 
-class DelGroupDialog extends StatefulWidget {
+class LogoutDialog extends StatefulWidget {
   final LoginProvider loginProvider;
-  final HomeProvider homeProvider;
 
-  const DelGroupDialog({
+  const LogoutDialog({
     required this.loginProvider,
-    required this.homeProvider,
     super.key,
   });
 
   @override
-  State<DelGroupDialog> createState() => _DelGroupDialogState();
+  State<LogoutDialog> createState() => _LogoutDialogState();
 }
 
-class _DelGroupDialogState extends State<DelGroupDialog> {
+class _LogoutDialogState extends State<LogoutDialog> {
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
       title: const Text(
-        'グループを削除',
+        'ログアウト',
         style: TextStyle(fontSize: 18),
       ),
-      content: SingleChildScrollView(
+      content: const SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('以下のグループを削除しますか？'),
-            const SizedBox(height: 8),
-            InfoLabel(
-              label: 'グループ名',
-              child: DisabledBox(widget.homeProvider.currentGroup?.name ?? ''),
-            ),
+            Text('本当にログアウトしますか？'),
           ],
         ),
       ),
@@ -285,25 +301,18 @@ class _DelGroupDialogState extends State<DelGroupDialog> {
           onPressed: () => Navigator.pop(context),
         ),
         CustomButtonSm(
-          labelText: '削除する',
+          labelText: 'ログアウト',
           labelColor: kWhiteColor,
           backgroundColor: kRedColor,
           onPressed: () async {
-            String? error = await widget.homeProvider.groupDelete(
-              group: widget.homeProvider.currentGroup,
-            );
-            if (error != null) {
-              if (!mounted) return;
-              showMessage(context, error, false);
-              return;
-            }
-            await widget.loginProvider.reloadData();
-            widget.homeProvider.currentGroupChange(
-              widget.loginProvider.groups.last,
-            );
+            await widget.loginProvider.logout();
             if (!mounted) return;
-            showMessage(context, 'グループを削除しました', true);
-            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              FluentPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+            );
           },
         ),
       ],

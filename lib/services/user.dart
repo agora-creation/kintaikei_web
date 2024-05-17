@@ -21,15 +21,15 @@ class UserService {
     firestore.collection(collection).doc(values['id']).delete();
   }
 
-  Future<bool> emailCheck(String email) async {
-    bool ret = false;
+  Future<UserModel?> selectToEmail({required String email}) async {
+    UserModel? ret;
     await firestore
         .collection(collection)
         .where('email', isEqualTo: email)
         .get()
         .then((value) {
       if (value.docs.isNotEmpty) {
-        ret = true;
+        ret = UserModel.fromSnapshot(value.docs.first);
       }
     });
     return ret;

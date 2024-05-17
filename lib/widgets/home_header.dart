@@ -4,7 +4,7 @@ import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/models/company_group.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
-import 'package:kintaikei_web/screens/login.dart';
+import 'package:kintaikei_web/screens/company.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_icon_button.dart';
 import 'package:kintaikei_web/widgets/custom_text_box.dart';
@@ -73,11 +73,11 @@ class _HomeHeaderState extends State<HomeHeader> {
                   popupColor: kWhiteColor,
                 ),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 2),
               CustomIconButton(
                 icon: FluentIcons.add,
-                iconColor: kBlackColor,
-                backgroundColor: kWhiteColor,
+                iconColor: kWhiteColor,
+                backgroundColor: kBlueColor,
                 onPressed: () => showDialog(
                   context: context,
                   builder: (context) => AddGroupDialog(
@@ -93,7 +93,15 @@ class _HomeHeaderState extends State<HomeHeader> {
             labelText: '会社情報',
             labelColor: kBlackColor,
             backgroundColor: kWhiteColor,
-            onPressed: () {},
+            onPressed: () => Navigator.push(
+              context,
+              FluentPageRoute(
+                builder: (context) => CompanyScreen(
+                  loginProvider: widget.loginProvider,
+                  homeProvider: widget.homeProvider,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -117,6 +125,7 @@ class AddGroupDialog extends StatefulWidget {
 
 class _AddGroupDialogState extends State<AddGroupDialog> {
   TextEditingController nameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -142,16 +151,19 @@ class _AddGroupDialogState extends State<AddGroupDialog> {
             const SizedBox(height: 8),
             InfoLabel(
               label: 'ログインID',
-              child: DisabledBox('aaa'),
+              child: DisabledBox(
+                '${widget.loginProvider.company?.loginId}-${widget.loginProvider.groups.length}',
+              ),
             ),
             const SizedBox(height: 8),
             InfoLabel(
               label: 'パスワード',
               child: CustomTextBox(
-                controller: TextEditingController(),
+                controller: passwordController,
                 placeholder: '',
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.visiblePassword,
                 maxLines: 1,
+                obscureText: true,
               ),
             ),
           ],
@@ -172,6 +184,8 @@ class _AddGroupDialogState extends State<AddGroupDialog> {
             String? error = await widget.homeProvider.groupCreate(
               company: widget.loginProvider.company,
               name: nameController.text,
+              index: widget.loginProvider.groups.length,
+              password: passwordController.text,
             );
             if (error != null) {
               if (!mounted) return;
@@ -185,62 +199,6 @@ class _AddGroupDialogState extends State<AddGroupDialog> {
             if (!mounted) return;
             showMessage(context, 'グループを追加しました', true);
             Navigator.pop(context);
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class LogoutDialog extends StatefulWidget {
-  final LoginProvider loginProvider;
-
-  const LogoutDialog({
-    required this.loginProvider,
-    super.key,
-  });
-
-  @override
-  State<LogoutDialog> createState() => _LogoutDialogState();
-}
-
-class _LogoutDialogState extends State<LogoutDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return ContentDialog(
-      title: const Text(
-        'ログアウト',
-        style: TextStyle(fontSize: 18),
-      ),
-      content: const SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('本当にログアウトしますか？'),
-          ],
-        ),
-      ),
-      actions: [
-        CustomButtonSm(
-          labelText: 'キャンセル',
-          labelColor: kWhiteColor,
-          backgroundColor: kGreyColor,
-          onPressed: () => Navigator.pop(context),
-        ),
-        CustomButtonSm(
-          labelText: 'ログアウト',
-          labelColor: kWhiteColor,
-          backgroundColor: kRedColor,
-          onPressed: () async {
-            await widget.loginProvider.logout();
-            if (!mounted) return;
-            Navigator.pushReplacement(
-              context,
-              FluentPageRoute(
-                builder: (context) => const LoginScreen(),
-              ),
-            );
           },
         ),
       ],
