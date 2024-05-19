@@ -11,6 +11,7 @@ import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_data_grid.dart';
 import 'package:kintaikei_web/widgets/custom_text_box.dart';
 import 'package:kintaikei_web/widgets/data_column.dart';
+import 'package:kintaikei_web/widgets/disabled_box.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -99,6 +100,7 @@ class _UserScreenState extends State<UserScreen> {
                 context: context,
                 users: users,
                 getUsers: _getUsers,
+                homeProvider: widget.homeProvider,
               ),
               columns: [
                 GridColumn(
@@ -244,6 +246,10 @@ class AddUserEmailDialog extends StatefulWidget {
 }
 
 class _AddUserEmailDialogState extends State<AddUserEmailDialog> {
+  UserService userService = UserService();
+  TextEditingController emailController = TextEditingController();
+  UserModel? user;
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -257,15 +263,36 @@ class _AddUserEmailDialogState extends State<AddUserEmailDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InfoLabel(
-              label: 'メールアドレス',
-              child: CustomTextBox(
-                controller: TextEditingController(),
-                placeholder: '',
-                keyboardType: TextInputType.emailAddress,
-                maxLines: 1,
-              ),
-            ),
+            user == null
+                ? InfoLabel(
+                    label: 'メールアドレス',
+                    child: CustomTextBox(
+                      controller: emailController,
+                      placeholder: '',
+                      keyboardType: TextInputType.emailAddress,
+                      maxLines: 1,
+                    ),
+                  )
+                : Column(
+                    children: [
+                      const Text('以下のスタッフを加入させますか？'),
+                      const SizedBox(height: 8),
+                      InfoLabel(
+                        label: 'スタッフ名',
+                        child: DisabledBox(user?.name ?? ''),
+                      ),
+                      const SizedBox(height: 8),
+                      InfoLabel(
+                        label: 'メールアドレス',
+                        child: DisabledBox(user?.email ?? ''),
+                      ),
+                      const SizedBox(height: 8),
+                      InfoLabel(
+                        label: 'パスワード',
+                        child: DisabledBox(user?.password ?? ''),
+                      ),
+                    ],
+                  ),
           ],
         ),
       ),
@@ -276,12 +303,46 @@ class _AddUserEmailDialogState extends State<AddUserEmailDialog> {
           backgroundColor: kGreyColor,
           onPressed: () => Navigator.pop(context),
         ),
-        CustomButtonSm(
-          labelText: '検索する',
-          labelColor: kWhiteColor,
-          backgroundColor: kBlueColor,
-          onPressed: () async {},
-        ),
+        user == null
+            ? CustomButtonSm(
+                labelText: '検索する',
+                labelColor: kWhiteColor,
+                backgroundColor: kBlueColor,
+                onPressed: () async {
+                  UserModel? tmpUser = await userService.selectToEmail(
+                    email: emailController.text,
+                  );
+                  if (tmpUser != null) {
+                    setState(() {
+                      user = tmpUser;
+                    });
+                  } else {
+                    if (!mounted) return;
+                    showMessage(context, 'スタッフが見つかりませんでした', false);
+                    return;
+                  }
+                },
+              )
+            : CustomButtonSm(
+                labelText: '加入させる',
+                labelColor: kWhiteColor,
+                backgroundColor: kBlueColor,
+                onPressed: () async {
+                  String? error = await userProvider.groupIn(
+                    group: widget.homeProvider.currentGroup,
+                    user: user,
+                  );
+                  if (error != null) {
+                    if (!mounted) return;
+                    showMessage(context, error, false);
+                    return;
+                  }
+                  await widget.getUsers();
+                  if (!mounted) return;
+                  showMessage(context, 'スタッフを加入させました', true);
+                  Navigator.pop(context);
+                },
+              ),
       ],
     );
   }

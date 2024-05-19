@@ -40,7 +40,7 @@ class _WorkScreenState extends State<WorkScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
         ],
       ),
     );

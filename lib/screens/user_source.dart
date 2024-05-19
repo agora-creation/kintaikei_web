@@ -1,6 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:kintaikei_web/common/functions.dart';
 import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/models/user.dart';
+import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/user.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_text_box.dart';
@@ -13,11 +15,13 @@ class UserSource extends DataGridSource {
   final BuildContext context;
   final List<UserModel> users;
   final Function() getUsers;
+  final HomeProvider homeProvider;
 
   UserSource({
     required this.context,
     required this.users,
     required this.getUsers,
+    required this.homeProvider,
   }) {
     buildDataGridRows();
   }
@@ -73,7 +77,14 @@ class UserSource extends DataGridSource {
             labelText: '脱退',
             labelColor: kWhiteColor,
             backgroundColor: kRedColor,
-            onPressed: () {},
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => ExitUserDialog(
+                user: user,
+                getUsers: getUsers,
+                homeProvider: homeProvider,
+              ),
+            ),
           ),
         ],
       ),
@@ -211,7 +222,23 @@ class _ModUserDialogState extends State<ModUserDialog> {
           labelText: '上記内容で保存する',
           labelColor: kWhiteColor,
           backgroundColor: kBlueColor,
-          onPressed: () async {},
+          onPressed: () async {
+            String? error = await userProvider.update(
+              user: widget.user,
+              name: nameController.text,
+              email: emailController.text,
+              password: passwordController.text,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            await widget.getUsers();
+            if (!mounted) return;
+            showMessage(context, 'スタッフ情報を編集しました', true);
+            Navigator.pop(context);
+          },
         ),
       ],
     );
@@ -221,10 +248,12 @@ class _ModUserDialogState extends State<ModUserDialog> {
 class ExitUserDialog extends StatefulWidget {
   final UserModel user;
   final Function() getUsers;
+  final HomeProvider homeProvider;
 
   const ExitUserDialog({
     required this.user,
     required this.getUsers,
+    required this.homeProvider,
     super.key,
   });
 
@@ -275,8 +304,22 @@ class _ExitUserDialogState extends State<ExitUserDialog> {
         CustomButtonSm(
           labelText: '脱退させる',
           labelColor: kWhiteColor,
-          backgroundColor: kBlueColor,
-          onPressed: () async {},
+          backgroundColor: kRedColor,
+          onPressed: () async {
+            String? error = await userProvider.groupExit(
+              group: widget.homeProvider.currentGroup,
+              user: widget.user,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            await widget.getUsers();
+            if (!mounted) return;
+            showMessage(context, 'スタッフを脱退させました', true);
+            Navigator.pop(context);
+          },
         ),
       ],
     );
