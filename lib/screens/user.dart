@@ -61,7 +61,7 @@ class _UserScreenState extends State<UserScreen> {
               Row(
                 children: [
                   CustomButtonSm(
-                    icon: FluentIcons.profile_search,
+                    icon: FluentIcons.search,
                     labelText: 'メールアドレスから検索して加入',
                     labelColor: kWhiteColor,
                     backgroundColor: kBlueColor,

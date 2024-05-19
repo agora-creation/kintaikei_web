@@ -30,7 +30,13 @@ class _WorkScreenState extends State<WorkScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(),
+              CustomButtonSm(
+                icon: FluentIcons.calendar,
+                labelText: '2024年06月',
+                labelColor: kWhiteColor,
+                backgroundColor: kBlueColor,
+                onPressed: () {},
+              ),
               CustomButtonSm(
                 icon: FluentIcons.add,
                 labelText: '手入力で追加',
@@ -41,6 +47,16 @@ class _WorkScreenState extends State<WorkScreen> {
             ],
           ),
           const SizedBox(height: 16),
+          Expanded(
+            child: Scrollbar(
+              child: ListView.builder(
+                itemCount: 30,
+                itemBuilder: (context, index) {
+                  return Text('days$index');
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
