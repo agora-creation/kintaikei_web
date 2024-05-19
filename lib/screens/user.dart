@@ -74,7 +74,7 @@ class _UserScreenState extends State<UserScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   CustomButtonSm(
                     icon: FluentIcons.add,
                     labelText: '新規加入',

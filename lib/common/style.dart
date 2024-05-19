@@ -11,6 +11,8 @@ const kWhiteColor = Color(0xFFFFFFFF);
 const kBlueColor = Color(0xFF2196F3);
 const kRedColor = Color(0xFFF44336);
 const kYellowColor = Color(0xFFFFEB3B);
+const kCyanColor = Color(0xFF00BCD4);
+const kGreenColor = Color(0xFF4CAF50);
 
 FluentThemeData customTheme() {
   return FluentThemeData(

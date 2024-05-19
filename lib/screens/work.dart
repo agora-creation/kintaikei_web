@@ -3,6 +3,7 @@ import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
+import 'package:kintaikei_web/widgets/work_table.dart';
 
 class WorkScreen extends StatefulWidget {
   final LoginProvider loginProvider;
@@ -30,33 +31,48 @@ class _WorkScreenState extends State<WorkScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomButtonSm(
-                icon: FluentIcons.calendar,
-                labelText: '2024年06月',
-                labelColor: kWhiteColor,
-                backgroundColor: kBlueColor,
-                onPressed: () {},
+              Row(
+                children: [
+                  CustomButtonSm(
+                    icon: FluentIcons.table,
+                    labelText: '2024年06月',
+                    labelColor: kWhiteColor,
+                    backgroundColor: kCyanColor,
+                    onPressed: () {},
+                  ),
+                  const SizedBox(width: 4),
+                  CustomButtonSm(
+                    icon: FluentIcons.contact,
+                    labelText: 'スタッフ',
+                    labelColor: kWhiteColor,
+                    backgroundColor: kCyanColor,
+                    onPressed: () {},
+                  ),
+                ],
               ),
-              CustomButtonSm(
-                icon: FluentIcons.add,
-                labelText: '手入力で追加',
-                labelColor: kWhiteColor,
-                backgroundColor: kBlueColor,
-                onPressed: () {},
+              Row(
+                children: [
+                  CustomButtonSm(
+                    icon: FluentIcons.download,
+                    labelText: 'CSVをダウンロード',
+                    labelColor: kWhiteColor,
+                    backgroundColor: kGreenColor,
+                    onPressed: () {},
+                  ),
+                  const SizedBox(width: 4),
+                  CustomButtonSm(
+                    icon: FluentIcons.add,
+                    labelText: '手入力で追加',
+                    labelColor: kWhiteColor,
+                    backgroundColor: kBlueColor,
+                    onPressed: () {},
+                  ),
+                ],
               ),
             ],
           ),
           const SizedBox(height: 16),
-          Expanded(
-            child: Scrollbar(
-              child: ListView.builder(
-                itemCount: 30,
-                itemBuilder: (context, index) {
-                  return Text('days$index');
-                },
-              ),
-            ),
-          ),
+          WorkTable(),
         ],
       ),
     );
