@@ -1,12 +1,16 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/common/functions.dart';
 import 'package:kintaikei_web/common/style.dart';
+import 'package:kintaikei_web/models/work.dart';
+import 'package:kintaikei_web/widgets/work_list.dart';
 
 class WorkTable extends StatefulWidget {
   final DateTime searchMonth;
+  final List<WorkModel> works;
 
   const WorkTable({
     required this.searchMonth,
+    required this.works,
     super.key,
   });
 
@@ -32,31 +36,7 @@ class _WorkTableState extends State<WorkTable> {
         ),
         child: Column(
           children: [
-            Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: kGrey300Color),
-                ),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: const Row(
-                children: [
-                  Text('日付'),
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text('出勤時間'),
-                        Text('退勤時間'),
-                        Text('休憩時間'),
-                        Text('勤務時間'),
-                        Text('ステータス'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _workHeader(),
             Expanded(
               child: ListView.builder(
                 itemCount: days.length,
@@ -69,34 +49,22 @@ class _WorkTableState extends State<WorkTable> {
                       ),
                       color: kGrey300Color.withOpacity(0.5),
                     ),
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(8),
                     child: Row(
                       children: [
-                        Text(convertDateText('dd (E)', day)),
+                        CircleAvatar(
+                          backgroundColor: kMainColor,
+                          radius: 24,
+                          child: Text(
+                            convertDateText('dd(E)', day),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
                         Expanded(
                           child: Column(
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const Text('00:00'),
-                                  const Text('00:00'),
-                                  const Text('00:00'),
-                                  const Text('00:00'),
-                                  const Text('勤務'),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const Text('00:00'),
-                                  const Text('00:00'),
-                                  const Text('00:00'),
-                                  const Text('00:00'),
-                                  const Text('勤務'),
-                                ],
+                              WorkList(
+                                onPressed: () {},
                               ),
                             ],
                           ),
@@ -109,6 +77,46 @@ class _WorkTableState extends State<WorkTable> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _workHeader() {
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: kGrey300Color),
+        ),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: const Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: kWhiteColor,
+            radius: 24,
+            child: Text(
+              '日付',
+              style: TextStyle(
+                color: kBlackColor,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListTile(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text('出勤時間'),
+                  Text('退勤時間'),
+                  Text('休憩時間'),
+                  Text('勤務時間'),
+                  Text('ステータス'),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
