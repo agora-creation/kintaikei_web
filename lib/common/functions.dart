@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:intl/intl.dart';
+import 'package:kintaikei_web/services/date_machine_util.dart';
 
 void showMessage(BuildContext context, String msg, bool success) {
   displayInfoBar(context, builder: (context, close) {
@@ -117,4 +118,15 @@ Timestamp convertTimestamp(DateTime date, bool end) {
   return Timestamp.fromMillisecondsSinceEpoch(
     DateTime.parse(dateTime).millisecondsSinceEpoch,
   );
+}
+
+List<DateTime> generateDays(DateTime month) {
+  List<DateTime> ret = [];
+  Map<String, String> map = DateMachineUtilService.getMonthDate(month, 0);
+  DateTime start = DateTime.parse('${map['start']}');
+  DateTime end = DateTime.parse('${map['end']}');
+  for (int i = 0; i <= end.difference(start).inDays; i++) {
+    ret.add(start.add(Duration(days: i)));
+  }
+  return ret;
 }

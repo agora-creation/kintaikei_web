@@ -1,5 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:kintaikei_web/common/functions.dart';
 import 'package:kintaikei_web/common/style.dart';
+import 'package:kintaikei_web/models/user.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
@@ -20,6 +22,9 @@ class WorkScreen extends StatefulWidget {
 }
 
 class _WorkScreenState extends State<WorkScreen> {
+  DateTime searchMonth = DateTime.now();
+  UserModel? searchUser;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,7 +40,7 @@ class _WorkScreenState extends State<WorkScreen> {
                 children: [
                   CustomButtonSm(
                     icon: FluentIcons.table,
-                    labelText: '2024年06月',
+                    labelText: convertDateText('yyyy年MM月', searchMonth),
                     labelColor: kWhiteColor,
                     backgroundColor: kCyanColor,
                     onPressed: () {},
@@ -72,7 +77,9 @@ class _WorkScreenState extends State<WorkScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          WorkTable(),
+          WorkTable(
+            searchMonth: searchMonth,
+          ),
         ],
       ),
     );
