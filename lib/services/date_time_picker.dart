@@ -1,5 +1,6 @@
 import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 class DateTimePickerService {
   Future boardPicker({
@@ -20,6 +21,15 @@ class DateTimePickerService {
       ),
       radius: 8,
       onChanged: onChanged,
+    );
+  }
+
+  Future<DateTime?> monthPicker({
+    required BuildContext context,
+    required DateTime initialDate,
+  }) async {
+    await showMonthPicker(
+      context: context,
     );
   }
 
