@@ -42,27 +42,42 @@ class _WorkTableState extends State<WorkTable> {
                 itemCount: days.length,
                 itemBuilder: (context, index) {
                   DateTime day = days[index];
+                  List<WorkModel> dayWorks = [];
+
                   return Container(
                     decoration: BoxDecoration(
                       border: const Border(
                         bottom: BorderSide(color: kGrey300Color),
                       ),
-                      color: kGrey300Color.withOpacity(0.5),
+                      color: convertDateText('E', day) == '木'
+                          ? kWhiteColor
+                          : kGrey300Color.withOpacity(0.6),
                     ),
                     padding: const EdgeInsets.all(8),
                     child: Row(
                       children: [
                         CircleAvatar(
-                          backgroundColor: kMainColor,
+                          backgroundColor: convertDateText('E', day) == '土'
+                              ? kLightBlueColor.withOpacity(0.3)
+                              : convertDateText('E', day) == '日'
+                                  ? kDeepOrangeColor.withOpacity(0.3)
+                                  : Colors.transparent,
                           radius: 24,
                           child: Text(
                             convertDateText('dd(E)', day),
-                            style: const TextStyle(fontSize: 14),
+                            style: const TextStyle(
+                              color: kBlackColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         Expanded(
                           child: Column(
                             children: [
+                              WorkList(
+                                onPressed: () {},
+                              ),
                               WorkList(
                                 onPressed: () {},
                               ),

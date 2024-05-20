@@ -1,8 +1,8 @@
 import 'package:board_datetime_picker/board_datetime_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 
 class DateTimePickerService {
-  Future picker({
+  Future boardPicker({
     required BuildContext context,
     required DateTime init,
     required String title,
@@ -22,4 +22,24 @@ class DateTimePickerService {
       onChanged: onChanged,
     );
   }
+
+  // Future<DateTime?> monthPicker({
+  //   required BuildContext context,
+  //   DateTime? value,
+  //   DateTime? endValue,
+  // }) async {
+  //   List<DateTime?>? results = await showCalendarDatePicker2Dialog(
+  //     context: context,
+  //     config: CalendarDatePicker2WithActionButtonsConfig(
+  //       calendarType: CalendarDatePicker2Type.range,
+  //       firstDate: kFirstDate,
+  //       lastDate: kLastDate,
+  //     ),
+  //     dialogSize: const Size(325, 400),
+  //     value: [startValue, endValue],
+  //     borderRadius: BorderRadius.circular(8),
+  //     dialogBackgroundColor: kWhiteColor,
+  //   );
+  //   return results;
+  // }
 }

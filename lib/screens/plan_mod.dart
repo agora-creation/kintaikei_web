@@ -31,6 +31,7 @@ class PlanModScreen extends StatefulWidget {
 
 class _PlanModScreenState extends State<PlanModScreen> {
   PlanService planService = PlanService();
+  DateTimePickerService pickerService = DateTimePickerService();
   TextEditingController subjectController = TextEditingController();
   DateTime startedAt = DateTime.now();
   DateTime endedAt = DateTime.now();
@@ -157,8 +158,7 @@ class _PlanModScreenState extends State<PlanModScreen> {
                   label: '予定時間帯を設定',
                   child: DatetimeRangeForm(
                     startedAt: startedAt,
-                    startedOnTap: () async =>
-                        await DateTimePickerService().picker(
+                    startedOnTap: () async => await pickerService.boardPicker(
                       context: context,
                       init: startedAt,
                       title: '予定開始日時を選択',
@@ -170,8 +170,7 @@ class _PlanModScreenState extends State<PlanModScreen> {
                       },
                     ),
                     endedAt: endedAt,
-                    endedOnTap: () async =>
-                        await DateTimePickerService().picker(
+                    endedOnTap: () async => await pickerService.boardPicker(
                       context: context,
                       init: endedAt,
                       title: '予定終了日時を選択',

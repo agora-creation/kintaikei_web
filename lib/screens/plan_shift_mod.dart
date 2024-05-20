@@ -33,6 +33,7 @@ class PlanShiftModScreen extends StatefulWidget {
 
 class _PlanShiftModScreenState extends State<PlanShiftModScreen> {
   PlanShiftService planShiftService = PlanShiftService();
+  DateTimePickerService pickerService = DateTimePickerService();
   PlanShiftModel? planShift;
   DateTime startedAt = DateTime.now();
   DateTime endedAt = DateTime.now();
@@ -166,8 +167,7 @@ class _PlanShiftModScreenState extends State<PlanShiftModScreen> {
                   label: '働く時間帯を設定',
                   child: DatetimeRangeForm(
                     startedAt: startedAt,
-                    startedOnTap: () async =>
-                        await DateTimePickerService().picker(
+                    startedOnTap: () async => await pickerService.boardPicker(
                       context: context,
                       init: startedAt,
                       title: '勤務予定開始日時を選択',
@@ -179,8 +179,7 @@ class _PlanShiftModScreenState extends State<PlanShiftModScreen> {
                       },
                     ),
                     endedAt: endedAt,
-                    endedOnTap: () async =>
-                        await DateTimePickerService().picker(
+                    endedOnTap: () async => await pickerService.boardPicker(
                       context: context,
                       init: endedAt,
                       title: '勤務予定終了日時を選択',

@@ -6,9 +6,9 @@ import 'package:kintaikei_web/models/user.dart';
 import 'package:kintaikei_web/models/work.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
+import 'package:kintaikei_web/screens/work_table.dart';
 import 'package:kintaikei_web/services/work.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
-import 'package:kintaikei_web/widgets/work_table.dart';
 
 class WorkScreen extends StatefulWidget {
   final LoginProvider loginProvider;
@@ -47,7 +47,7 @@ class _WorkScreenState extends State<WorkScreen> {
                     labelText: convertDateText('yyyy年MM月', searchMonth),
                     labelColor: kWhiteColor,
                     backgroundColor: kCyanColor,
-                    onPressed: () {},
+                    onPressed: () async {},
                   ),
                   const SizedBox(width: 4),
                   CustomButtonSm(
