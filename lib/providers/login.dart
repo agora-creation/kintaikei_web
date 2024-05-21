@@ -123,39 +123,24 @@ class LoginProvider with ChangeNotifier {
     return error;
   }
 
-  Future<String?> nameUpdate({
+  Future<String?> update({
     required CompanyModel? company,
     required String name,
-  }) async {
-    String? error;
-    if (company == null) return '会社名の変更に失敗しました';
-    if (name == '') return '会社名を入力してください';
-    try {
-      _companyService.update({
-        'id': company.id,
-        'name': name,
-      });
-    } catch (e) {
-      error = '会社名の変更に失敗しました';
-    }
-    return error;
-  }
-
-  Future<String?> passwordUpdate({
-    required CompanyModel? company,
     required String password,
   }) async {
     String? error;
-    if (company == null) return 'パスワードの変更に失敗しました';
+    if (company == null) return '会社情報の変更に失敗しました';
+    if (name == '') return '会社名を入力してください';
     if (password == '') return 'パスワードを入力してください';
     try {
       _companyService.update({
         'id': company.id,
+        'name': name,
         'password': password,
       });
       await _localDBService.setString('password', password);
     } catch (e) {
-      error = 'パスワードの変更に失敗しました';
+      error = '会社情報の変更に失敗しました';
     }
     return error;
   }

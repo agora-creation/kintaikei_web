@@ -4,11 +4,12 @@ import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/models/company_group.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
-import 'package:kintaikei_web/screens/company.dart';
+import 'package:kintaikei_web/screens/login.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_icon_button.dart';
 import 'package:kintaikei_web/widgets/custom_text_box.dart';
 import 'package:kintaikei_web/widgets/disabled_box.dart';
+import 'package:kintaikei_web/widgets/link_text.dart';
 
 class HomeHeader extends StatefulWidget {
   final LoginProvider loginProvider;
@@ -106,13 +107,11 @@ class _HomeHeaderState extends State<HomeHeader> {
             labelText: '会社情報',
             labelColor: kBlackColor,
             backgroundColor: kWhiteColor,
-            onPressed: () => Navigator.push(
-              context,
-              FluentPageRoute(
-                builder: (context) => CompanyScreen(
-                  loginProvider: widget.loginProvider,
-                  homeProvider: widget.homeProvider,
-                ),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => ModCompanyDialog(
+                loginProvider: widget.loginProvider,
+                homeProvider: widget.homeProvider,
               ),
             ),
           ),
@@ -248,7 +247,7 @@ class _ModGroupDialogState extends State<ModGroupDialog> {
   Widget build(BuildContext context) {
     return ContentDialog(
       title: const Text(
-        'グループ情報を編集',
+        'グループ情報を変更',
         style: TextStyle(fontSize: 18),
       ),
       content: SingleChildScrollView(
@@ -283,6 +282,30 @@ class _ModGroupDialogState extends State<ModGroupDialog> {
                 obscureText: true,
               ),
             ),
+            widget.homeProvider.currentGroup?.index != 0
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: LinkText(
+                      label: 'このグループを削除する',
+                      color: kRedColor,
+                      onTap: () async {
+                        String? error = await widget.homeProvider.groupDelete(
+                          group: widget.homeProvider.currentGroup,
+                        );
+                        if (error != null) {
+                          if (!mounted) return;
+                          showMessage(context, error, false);
+                          return;
+                        }
+                        await widget.loginProvider.reloadData();
+                        widget.homeProvider.currentGroupClear();
+                        if (!mounted) return;
+                        showMessage(context, 'グループをを削除しました', true);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ),
@@ -314,6 +337,124 @@ class _ModGroupDialogState extends State<ModGroupDialog> {
             );
             if (!mounted) return;
             showMessage(context, 'グループ情報を変更しました', true);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class ModCompanyDialog extends StatefulWidget {
+  final LoginProvider loginProvider;
+  final HomeProvider homeProvider;
+
+  const ModCompanyDialog({
+    required this.loginProvider,
+    required this.homeProvider,
+    super.key,
+  });
+
+  @override
+  State<ModCompanyDialog> createState() => _ModCompanyDialogState();
+}
+
+class _ModCompanyDialogState extends State<ModCompanyDialog> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    nameController.text = widget.loginProvider.company?.name ?? '';
+    passwordController.text = widget.loginProvider.company?.password ?? '';
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ContentDialog(
+      title: const Text(
+        '会社情報を変更',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InfoLabel(
+              label: '会社名',
+              child: CustomTextBox(
+                controller: nameController,
+                placeholder: '',
+                keyboardType: TextInputType.text,
+                maxLines: 1,
+              ),
+            ),
+            const SizedBox(height: 8),
+            InfoLabel(
+              label: 'ログインID',
+              child: DisabledBox(
+                '${widget.loginProvider.company?.loginId}',
+              ),
+            ),
+            const SizedBox(height: 8),
+            InfoLabel(
+              label: 'パスワード',
+              child: CustomTextBox(
+                controller: passwordController,
+                placeholder: '',
+                keyboardType: TextInputType.visiblePassword,
+                maxLines: 1,
+                obscureText: true,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: LinkText(
+                label: 'ログアウト',
+                color: kRedColor,
+                onTap: () async {
+                  await widget.loginProvider.logout();
+                  if (!mounted) return;
+                  Navigator.pushReplacement(
+                    context,
+                    FluentPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        CustomButtonSm(
+          labelText: 'キャンセル',
+          labelColor: kWhiteColor,
+          backgroundColor: kGreyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButtonSm(
+          labelText: '上記内容で保存する',
+          labelColor: kWhiteColor,
+          backgroundColor: kBlueColor,
+          onPressed: () async {
+            String? error = await widget.loginProvider.update(
+              company: widget.loginProvider.company,
+              name: nameController.text,
+              password: passwordController.text,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            await widget.loginProvider.reloadData();
+            widget.homeProvider.currentGroupClear();
+            if (!mounted) return;
+            showMessage(context, '会社情報を変更しました', true);
             Navigator.pop(context);
           },
         ),
