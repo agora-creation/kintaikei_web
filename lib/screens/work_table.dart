@@ -3,13 +3,14 @@ import 'package:kintaikei_web/common/functions.dart';
 import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/models/work.dart';
 import 'package:kintaikei_web/widgets/work_list.dart';
+import 'package:kintaikei_web/widgets/work_total_list.dart';
 
 class WorkTable extends StatefulWidget {
-  final DateTime searchMonth;
+  final List<DateTime> days;
   final List<WorkModel> works;
 
   const WorkTable({
-    required this.searchMonth,
+    required this.days,
     required this.works,
     super.key,
   });
@@ -19,16 +20,22 @@ class WorkTable extends StatefulWidget {
 }
 
 class _WorkTableState extends State<WorkTable> {
-  List<DateTime> days = [];
-
-  @override
-  void initState() {
-    days = generateDays(widget.searchMonth);
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
+    Map workCount = {};
+    int totalDays = 0;
+    String totalTime = '00:00';
+    if (widget.works.isNotEmpty) {
+      for (WorkModel work in widget.works) {
+        String dayKey = convertDateText(
+          'yyyy-MM-dd',
+          work.startedAt,
+        );
+        workCount[dayKey] = '';
+        totalTime = addTime(totalTime, work.totalTime());
+      }
+      totalDays = workCount.length;
+    }
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -39,17 +46,27 @@ class _WorkTableState extends State<WorkTable> {
             _workHeader(),
             Expanded(
               child: ListView.builder(
-                itemCount: days.length,
+                itemCount: widget.days.length,
                 itemBuilder: (context, index) {
-                  DateTime day = days[index];
+                  DateTime day = widget.days[index];
                   List<WorkModel> dayWorks = [];
-
+                  if (widget.works.isNotEmpty) {
+                    for (WorkModel work in widget.works) {
+                      String dayKey = convertDateText(
+                        'yyyy-MM-dd',
+                        work.startedAt,
+                      );
+                      if (day == DateTime.parse(dayKey)) {
+                        dayWorks.add(work);
+                      }
+                    }
+                  }
                   return Container(
                     decoration: BoxDecoration(
                       border: const Border(
                         bottom: BorderSide(color: kGrey300Color),
                       ),
-                      color: convertDateText('E', day) == '木'
+                      color: dayWorks.isNotEmpty
                           ? kWhiteColor
                           : kGrey300Color.withOpacity(0.6),
                     ),
@@ -68,20 +85,17 @@ class _WorkTableState extends State<WorkTable> {
                             style: const TextStyle(
                               color: kBlackColor,
                               fontSize: 14,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                         Expanded(
                           child: Column(
-                            children: [
-                              WorkList(
+                            children: dayWorks.map((work) {
+                              return WorkList(
+                                work: work,
                                 onPressed: () {},
-                              ),
-                              WorkList(
-                                onPressed: () {},
-                              ),
-                            ],
+                              );
+                            }).toList(),
                           ),
                         ),
                       ],
@@ -89,6 +103,10 @@ class _WorkTableState extends State<WorkTable> {
                   );
                 },
               ),
+            ),
+            WorkTotalList(
+              totalDays: totalDays,
+              totalTime: totalTime,
             ),
           ],
         ),

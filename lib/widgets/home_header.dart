@@ -75,6 +75,13 @@ class _HomeHeaderState extends State<HomeHeader> {
               ),
               const SizedBox(width: 2),
               CustomIconButton(
+                icon: FluentIcons.settings,
+                iconColor: kWhiteColor,
+                backgroundColor: kGreyColor,
+                onPressed: () {},
+              ),
+              const SizedBox(width: 2),
+              CustomIconButton(
                 icon: FluentIcons.add,
                 iconColor: kWhiteColor,
                 backgroundColor: kBlueColor,
