@@ -60,8 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    const Text('会社の管理者がログインしましょう'),
-                    const SizedBox(height: 16),
                     CustomTextBox(
                       controller: loginIdController,
                       placeholder: 'ログインID',

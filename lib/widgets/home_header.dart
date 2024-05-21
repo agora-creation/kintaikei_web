@@ -78,7 +78,13 @@ class _HomeHeaderState extends State<HomeHeader> {
                 icon: FluentIcons.settings,
                 iconColor: kWhiteColor,
                 backgroundColor: kGreyColor,
-                onPressed: () {},
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => ModGroupDialog(
+                    loginProvider: widget.loginProvider,
+                    homeProvider: widget.homeProvider,
+                  ),
+                ),
               ),
               const SizedBox(width: 2),
               CustomIconButton(
@@ -205,6 +211,109 @@ class _AddGroupDialogState extends State<AddGroupDialog> {
             );
             if (!mounted) return;
             showMessage(context, 'グループを追加しました', true);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class ModGroupDialog extends StatefulWidget {
+  final LoginProvider loginProvider;
+  final HomeProvider homeProvider;
+
+  const ModGroupDialog({
+    required this.loginProvider,
+    required this.homeProvider,
+    super.key,
+  });
+
+  @override
+  State<ModGroupDialog> createState() => _ModGroupDialogState();
+}
+
+class _ModGroupDialogState extends State<ModGroupDialog> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    nameController.text = widget.homeProvider.currentGroup?.name ?? '';
+    passwordController.text = widget.homeProvider.currentGroup?.password ?? '';
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ContentDialog(
+      title: const Text(
+        'グループ情報を編集',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InfoLabel(
+              label: 'グループ名',
+              child: CustomTextBox(
+                controller: nameController,
+                placeholder: '',
+                keyboardType: TextInputType.text,
+                maxLines: 1,
+              ),
+            ),
+            const SizedBox(height: 8),
+            InfoLabel(
+              label: 'ログインID',
+              child: DisabledBox(
+                '${widget.homeProvider.currentGroup?.loginId}',
+              ),
+            ),
+            const SizedBox(height: 8),
+            InfoLabel(
+              label: 'パスワード',
+              child: CustomTextBox(
+                controller: passwordController,
+                placeholder: '',
+                keyboardType: TextInputType.visiblePassword,
+                maxLines: 1,
+                obscureText: true,
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        CustomButtonSm(
+          labelText: 'キャンセル',
+          labelColor: kWhiteColor,
+          backgroundColor: kGreyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButtonSm(
+          labelText: '上記内容で保存する',
+          labelColor: kWhiteColor,
+          backgroundColor: kBlueColor,
+          onPressed: () async {
+            String? error = await widget.homeProvider.groupUpdate(
+              group: widget.homeProvider.currentGroup,
+              name: nameController.text,
+              password: passwordController.text,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            await widget.loginProvider.reloadData();
+            widget.homeProvider.currentGroupChange(
+              widget.homeProvider.currentGroup,
+            );
+            if (!mounted) return;
+            showMessage(context, 'グループ情報を変更しました', true);
             Navigator.pop(context);
           },
         ),

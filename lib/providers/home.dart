@@ -58,38 +58,23 @@ class HomeProvider with ChangeNotifier {
     return error;
   }
 
-  Future<String?> groupNameUpdate({
+  Future<String?> groupUpdate({
     required CompanyGroupModel? group,
     required String name,
-  }) async {
-    String? error;
-    if (group == null) return 'グループ名の変更に失敗しました';
-    if (name == '') return 'グループ名を入力してください';
-    try {
-      _groupService.update({
-        'id': group.id,
-        'name': name,
-      });
-    } catch (e) {
-      error = 'グループ名の変更に失敗しました';
-    }
-    return error;
-  }
-
-  Future<String?> groupPasswordUpdate({
-    required CompanyGroupModel? group,
     required String password,
   }) async {
     String? error;
-    if (group == null) return 'パスワードの変更に失敗しました';
+    if (group == null) return 'グループ情報の変更に失敗しました';
+    if (name == '') return 'グループ名を入力してください';
     if (password == '') return 'パスワードを入力してください';
     try {
       _groupService.update({
         'id': group.id,
+        'name': name,
         'password': password,
       });
     } catch (e) {
-      error = 'パスワードの変更に失敗しました';
+      error = 'グループ情報の変更に失敗しました';
     }
     return error;
   }

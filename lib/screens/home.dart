@@ -2,7 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
-import 'package:kintaikei_web/screens/group.dart';
 import 'package:kintaikei_web/screens/plan.dart';
 import 'package:kintaikei_web/screens/plan_shift.dart';
 import 'package:kintaikei_web/screens/user.dart';
@@ -106,22 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
               homeProvider: homeProvider,
             ),
             tileColor: homeProvider.currentIndex == 3
-                ? ButtonState.all(kWhiteColor)
-                : null,
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.engineering_group),
-            title: Text(
-              'グループ情報',
-              style: homeProvider.currentIndex == 4
-                  ? const TextStyle(color: kMainColor)
-                  : null,
-            ),
-            body: GroupScreen(
-              loginProvider: loginProvider,
-              homeProvider: homeProvider,
-            ),
-            tileColor: homeProvider.currentIndex == 4
                 ? ButtonState.all(kWhiteColor)
                 : null,
           ),
