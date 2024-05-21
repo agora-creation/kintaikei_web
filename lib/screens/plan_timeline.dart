@@ -12,6 +12,7 @@ import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_text_box.dart';
 import 'package:kintaikei_web/widgets/custom_timeline.dart';
 import 'package:kintaikei_web/widgets/datetime_range_form.dart';
+import 'package:kintaikei_web/widgets/link_text.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart' as sfc;
 
@@ -184,7 +185,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
     return ContentDialog(
       constraints: const BoxConstraints(
         maxWidth: 600,
-        maxHeight: 500,
+        maxHeight: 650,
       ),
       title: const Text(
         '予定を新しく追加',
@@ -231,6 +232,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
                     });
                   },
                 ),
+                viewAllDay: true,
                 allDay: allDay,
                 allDayOnChanged: _allDayChange,
               ),
@@ -402,7 +404,7 @@ class _ModPlanDialogState extends State<ModPlanDialog> {
     return ContentDialog(
       constraints: const BoxConstraints(
         maxWidth: 600,
-        maxHeight: 500,
+        maxHeight: 650,
       ),
       title: const Text(
         '予定を編集',
@@ -449,6 +451,7 @@ class _ModPlanDialogState extends State<ModPlanDialog> {
                     });
                   },
                 ),
+                viewAllDay: true,
                 allDay: allDay,
                 allDayOnChanged: _allDayChange,
               ),
@@ -502,6 +505,21 @@ class _ModPlanDialogState extends State<ModPlanDialog> {
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: LinkText(
+                label: 'この予定を削除する',
+                color: kRedColor,
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (context) => DelPlanDialog(
+                    loginProvider: widget.loginProvider,
+                    homeProvider: widget.homeProvider,
+                    planId: widget.planId,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -534,6 +552,71 @@ class _ModPlanDialogState extends State<ModPlanDialog> {
             if (!mounted) return;
             showMessage(context, '予定を編集しました', true);
             Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class DelPlanDialog extends StatefulWidget {
+  final LoginProvider loginProvider;
+  final HomeProvider homeProvider;
+  final String planId;
+
+  const DelPlanDialog({
+    required this.loginProvider,
+    required this.homeProvider,
+    required this.planId,
+    super.key,
+  });
+
+  @override
+  State<DelPlanDialog> createState() => _DelPlanDialogState();
+}
+
+class _DelPlanDialogState extends State<DelPlanDialog> {
+  @override
+  Widget build(BuildContext context) {
+    final planProvider = Provider.of<PlanProvider>(context);
+    return ContentDialog(
+      title: const Text(
+        '予定を削除',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: const SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('この予定を削除しますか？'),
+          ],
+        ),
+      ),
+      actions: [
+        CustomButtonSm(
+          labelText: 'キャンセル',
+          labelColor: kWhiteColor,
+          backgroundColor: kGreyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButtonSm(
+          labelText: '削除する',
+          labelColor: kWhiteColor,
+          backgroundColor: kRedColor,
+          onPressed: () async {
+            String? error = await planProvider.delete(
+              id: widget.planId,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            if (!mounted) return;
+            showMessage(context, '予定を削除しました', true);
+            Navigator.pop(context);
+            Navigator.of(context, rootNavigator: true).pop();
           },
         ),
       ],

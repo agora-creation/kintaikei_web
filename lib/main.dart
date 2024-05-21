@@ -8,6 +8,7 @@ import 'package:kintaikei_web/providers/login.dart';
 import 'package:kintaikei_web/providers/plan.dart';
 import 'package:kintaikei_web/providers/plan_shift.dart';
 import 'package:kintaikei_web/providers/user.dart';
+import 'package:kintaikei_web/providers/work.dart';
 import 'package:kintaikei_web/screens/home.dart';
 import 'package:kintaikei_web/screens/login.dart';
 import 'package:kintaikei_web/screens/splash.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: PlanProvider()),
         ChangeNotifierProvider.value(value: PlanShiftProvider()),
         ChangeNotifierProvider.value(value: UserProvider()),
+        ChangeNotifierProvider.value(value: WorkProvider()),
       ],
       child: FluentApp(
         debugShowCheckedModeBanner: false,

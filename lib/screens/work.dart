@@ -12,6 +12,8 @@ import 'package:kintaikei_web/services/user.dart';
 import 'package:kintaikei_web/services/work.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_radio.dart';
+import 'package:kintaikei_web/widgets/custom_text_box.dart';
+import 'package:kintaikei_web/widgets/datetime_range_form.dart';
 
 class WorkScreen extends StatefulWidget {
   final LoginProvider loginProvider;
@@ -112,7 +114,13 @@ class _WorkScreenState extends State<WorkScreen> {
                     labelText: '手入力で追加',
                     labelColor: kWhiteColor,
                     backgroundColor: kBlueColor,
-                    onPressed: () {},
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (context) => AddWorkDialog(
+                        loginProvider: widget.loginProvider,
+                        homeProvider: widget.homeProvider,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -208,6 +216,141 @@ class _SearchUserDialogState extends State<SearchUserDialog> {
           labelColor: kWhiteColor,
           backgroundColor: kGreyColor,
           onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    );
+  }
+}
+
+class AddWorkDialog extends StatefulWidget {
+  final LoginProvider loginProvider;
+  final HomeProvider homeProvider;
+
+  const AddWorkDialog({
+    required this.loginProvider,
+    required this.homeProvider,
+    super.key,
+  });
+
+  @override
+  State<AddWorkDialog> createState() => _AddWorkDialogState();
+}
+
+class _AddWorkDialogState extends State<AddWorkDialog> {
+  DateTimePickerService pickerService = DateTimePickerService();
+  TextEditingController subjectController = TextEditingController();
+  DateTime startedAt = DateTime.now();
+  DateTime endedAt = DateTime.now();
+  bool allDay = false;
+  Color color = kColors.first;
+  int alertMinute = kAlertMinutes[1];
+
+  void _init() async {
+    startedAt = DateTime.now();
+    endedAt = startedAt.add(const Duration(hours: 1));
+    setState(() {});
+  }
+
+  void _allDayChange(bool? value) {
+    allDay = value ?? false;
+    if (allDay) {
+      startedAt = DateTime(
+        startedAt.year,
+        startedAt.month,
+        startedAt.day,
+        0,
+        0,
+        0,
+      );
+      endedAt = DateTime(
+        endedAt.year,
+        endedAt.month,
+        endedAt.day,
+        23,
+        59,
+        59,
+      );
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final planProvider = Provider.of<PlanProvider>(context);
+    return ContentDialog(
+      constraints: const BoxConstraints(
+        maxWidth: 600,
+        maxHeight: 650,
+      ),
+      title: const Text(
+        '勤怠打刻を手入力で追加',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InfoLabel(
+              label: '勤務スタッフ',
+              child: CustomTextBox(
+                controller: TextEditingController(),
+                placeholder: '',
+                keyboardType: TextInputType.text,
+                maxLines: 1,
+              ),
+            ),
+            const SizedBox(height: 8),
+            InfoLabel(
+              label: '出勤時間 ～ 退勤時間',
+              child: DatetimeRangeForm(
+                startedAt: startedAt,
+                startedOnTap: () async => await pickerService.boardPicker(
+                  context: context,
+                  init: startedAt,
+                  title: '出勤時間を選択',
+                  onChanged: (value) {
+                    setState(() {
+                      startedAt = value;
+                      endedAt = startedAt.add(const Duration(hours: 1));
+                    });
+                  },
+                ),
+                endedAt: endedAt,
+                endedOnTap: () async => await pickerService.boardPicker(
+                  context: context,
+                  init: endedAt,
+                  title: '退勤時間を選択',
+                  onChanged: (value) {
+                    setState(() {
+                      endedAt = value;
+                    });
+                  },
+                ),
+                viewAllDay: false,
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        CustomButtonSm(
+          labelText: 'キャンセル',
+          labelColor: kWhiteColor,
+          backgroundColor: kGreyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButtonSm(
+          labelText: '上記内容で追加する',
+          labelColor: kWhiteColor,
+          backgroundColor: kBlueColor,
+          onPressed: () async {},
         ),
       ],
     );

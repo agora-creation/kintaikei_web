@@ -7,16 +7,18 @@ class DatetimeRangeForm extends StatelessWidget {
   final Function() startedOnTap;
   final DateTime endedAt;
   final Function() endedOnTap;
+  final bool viewAllDay;
   final bool allDay;
-  final Function(bool?) allDayOnChanged;
+  final Function(bool?)? allDayOnChanged;
 
   const DatetimeRangeForm({
     required this.startedAt,
     required this.startedOnTap,
     required this.endedAt,
     required this.endedOnTap,
-    required this.allDay,
-    required this.allDayOnChanged,
+    required this.viewAllDay,
+    this.allDay = false,
+    this.allDayOnChanged,
     super.key,
   });
 
@@ -86,18 +88,20 @@ class DatetimeRangeForm extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            decoration: const BoxDecoration(
-              border: Border(top: BorderSide(color: kGrey300Color)),
-            ),
-            padding: const EdgeInsets.only(top: 8),
-            width: double.infinity,
-            child: Checkbox(
-              checked: allDay,
-              onChanged: allDayOnChanged,
-              content: const Text('終日'),
-            ),
-          ),
+          viewAllDay
+              ? Container(
+                  decoration: const BoxDecoration(
+                    border: Border(top: BorderSide(color: kGrey300Color)),
+                  ),
+                  padding: const EdgeInsets.only(top: 8),
+                  width: double.infinity,
+                  child: Checkbox(
+                    checked: allDay,
+                    onChanged: allDayOnChanged,
+                    content: const Text('終日'),
+                  ),
+                )
+              : Container(),
         ],
       ),
     );

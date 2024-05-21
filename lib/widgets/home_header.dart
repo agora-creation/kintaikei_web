@@ -288,21 +288,13 @@ class _ModGroupDialogState extends State<ModGroupDialog> {
                     child: LinkText(
                       label: 'このグループを削除する',
                       color: kRedColor,
-                      onTap: () async {
-                        String? error = await widget.homeProvider.groupDelete(
-                          group: widget.homeProvider.currentGroup,
-                        );
-                        if (error != null) {
-                          if (!mounted) return;
-                          showMessage(context, error, false);
-                          return;
-                        }
-                        await widget.loginProvider.reloadData();
-                        widget.homeProvider.currentGroupClear();
-                        if (!mounted) return;
-                        showMessage(context, 'グループをを削除しました', true);
-                        Navigator.pop(context);
-                      },
+                      onTap: () => showDialog(
+                        context: context,
+                        builder: (context) => DelGroupDialog(
+                          loginProvider: widget.loginProvider,
+                          homeProvider: widget.homeProvider,
+                        ),
+                      ),
                     ),
                   )
                 : Container(),
@@ -338,6 +330,70 @@ class _ModGroupDialogState extends State<ModGroupDialog> {
             if (!mounted) return;
             showMessage(context, 'グループ情報を変更しました', true);
             Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class DelGroupDialog extends StatefulWidget {
+  final LoginProvider loginProvider;
+  final HomeProvider homeProvider;
+
+  const DelGroupDialog({
+    required this.loginProvider,
+    required this.homeProvider,
+    super.key,
+  });
+
+  @override
+  State<DelGroupDialog> createState() => _DelGroupDialogState();
+}
+
+class _DelGroupDialogState extends State<DelGroupDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return ContentDialog(
+      title: const Text(
+        'グループを削除',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: const SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('このグループを削除しますか？'),
+          ],
+        ),
+      ),
+      actions: [
+        CustomButtonSm(
+          labelText: 'キャンセル',
+          labelColor: kWhiteColor,
+          backgroundColor: kGreyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButtonSm(
+          labelText: '削除する',
+          labelColor: kWhiteColor,
+          backgroundColor: kRedColor,
+          onPressed: () async {
+            String? error = await widget.homeProvider.groupDelete(
+              group: widget.homeProvider.currentGroup,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            await widget.loginProvider.reloadData();
+            widget.homeProvider.currentGroupClear();
+            if (!mounted) return;
+            showMessage(context, 'グループをを削除しました', true);
+            Navigator.pop(context);
+            Navigator.of(context, rootNavigator: true).pop();
           },
         ),
       ],
@@ -414,16 +470,13 @@ class _ModCompanyDialogState extends State<ModCompanyDialog> {
               child: LinkText(
                 label: 'ログアウト',
                 color: kRedColor,
-                onTap: () async {
-                  await widget.loginProvider.logout();
-                  if (!mounted) return;
-                  Navigator.pushReplacement(
-                    context,
-                    FluentPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  );
-                },
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (context) => LogoutDialog(
+                    loginProvider: widget.loginProvider,
+                    homeProvider: widget.homeProvider,
+                  ),
+                ),
               ),
             ),
           ],
@@ -456,6 +509,64 @@ class _ModCompanyDialogState extends State<ModCompanyDialog> {
             if (!mounted) return;
             showMessage(context, '会社情報を変更しました', true);
             Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class LogoutDialog extends StatefulWidget {
+  final LoginProvider loginProvider;
+  final HomeProvider homeProvider;
+
+  const LogoutDialog({
+    required this.loginProvider,
+    required this.homeProvider,
+    super.key,
+  });
+
+  @override
+  State<LogoutDialog> createState() => _LogoutDialogState();
+}
+
+class _LogoutDialogState extends State<LogoutDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return ContentDialog(
+      title: const Text(
+        'ログアウト',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: const SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('本当にログアウトしますか？'),
+          ],
+        ),
+      ),
+      actions: [
+        CustomButtonSm(
+          labelText: 'キャンセル',
+          labelColor: kWhiteColor,
+          backgroundColor: kGreyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButtonSm(
+          labelText: 'ログアウト',
+          labelColor: kWhiteColor,
+          backgroundColor: kRedColor,
+          onPressed: () async {
+            await widget.loginProvider.logout();
+            if (!mounted) return;
+            Navigator.pushReplacement(
+              context,
+              FluentPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+            );
           },
         ),
       ],
