@@ -6,14 +6,15 @@ import 'package:kintaikei_web/models/user.dart';
 import 'package:kintaikei_web/models/work.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
+import 'package:kintaikei_web/providers/work.dart';
 import 'package:kintaikei_web/screens/work_table.dart';
 import 'package:kintaikei_web/services/date_time_picker.dart';
 import 'package:kintaikei_web/services/user.dart';
 import 'package:kintaikei_web/services/work.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
 import 'package:kintaikei_web/widgets/custom_radio.dart';
-import 'package:kintaikei_web/widgets/custom_text_box.dart';
 import 'package:kintaikei_web/widgets/datetime_range_form.dart';
+import 'package:provider/provider.dart';
 
 class WorkScreen extends StatefulWidget {
   final LoginProvider loginProvider;
@@ -119,6 +120,7 @@ class _WorkScreenState extends State<WorkScreen> {
                       builder: (context) => AddWorkDialog(
                         loginProvider: widget.loginProvider,
                         homeProvider: widget.homeProvider,
+                        searchUser: searchUser,
                       ),
                     ),
                   ),
@@ -137,6 +139,8 @@ class _WorkScreenState extends State<WorkScreen> {
             builder: (context, snapshot) {
               List<WorkModel> works = workService.convertList(snapshot);
               return WorkTable(
+                loginProvider: widget.loginProvider,
+                homeProvider: widget.homeProvider,
                 days: days,
                 works: works,
               );
@@ -225,10 +229,12 @@ class _SearchUserDialogState extends State<SearchUserDialog> {
 class AddWorkDialog extends StatefulWidget {
   final LoginProvider loginProvider;
   final HomeProvider homeProvider;
+  final UserModel? searchUser;
 
   const AddWorkDialog({
     required this.loginProvider,
     required this.homeProvider,
+    required this.searchUser,
     super.key,
   });
 
@@ -238,39 +244,26 @@ class AddWorkDialog extends StatefulWidget {
 
 class _AddWorkDialogState extends State<AddWorkDialog> {
   DateTimePickerService pickerService = DateTimePickerService();
-  TextEditingController subjectController = TextEditingController();
+  UserService userService = UserService();
+  List<UserModel> users = [];
+  UserModel? selectedUser;
   DateTime startedAt = DateTime.now();
   DateTime endedAt = DateTime.now();
-  bool allDay = false;
-  Color color = kColors.first;
-  int alertMinute = kAlertMinutes[1];
 
   void _init() async {
-    startedAt = DateTime.now();
-    endedAt = startedAt.add(const Duration(hours: 1));
-    setState(() {});
-  }
-
-  void _allDayChange(bool? value) {
-    allDay = value ?? false;
-    if (allDay) {
-      startedAt = DateTime(
-        startedAt.year,
-        startedAt.month,
-        startedAt.day,
-        0,
-        0,
-        0,
-      );
-      endedAt = DateTime(
-        endedAt.year,
-        endedAt.month,
-        endedAt.day,
-        23,
-        59,
-        59,
-      );
-    }
+    users = await userService.selectListToUserIds(
+      userIds: widget.homeProvider.currentGroup?.userIds ?? [],
+    );
+    selectedUser = widget.searchUser;
+    startedAt = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+      8,
+      0,
+      0,
+    );
+    endedAt = startedAt.add(const Duration(hours: 8));
     setState(() {});
   }
 
@@ -282,7 +275,7 @@ class _AddWorkDialogState extends State<AddWorkDialog> {
 
   @override
   Widget build(BuildContext context) {
-    // final planProvider = Provider.of<PlanProvider>(context);
+    final workProvider = Provider.of<WorkProvider>(context);
     return ContentDialog(
       constraints: const BoxConstraints(
         maxWidth: 600,
@@ -299,11 +292,24 @@ class _AddWorkDialogState extends State<AddWorkDialog> {
           children: [
             InfoLabel(
               label: '勤務スタッフ',
-              child: CustomTextBox(
-                controller: TextEditingController(),
-                placeholder: '',
-                keyboardType: TextInputType.text,
-                maxLines: 1,
+              child: ComboBox<UserModel?>(
+                isExpanded: true,
+                value: selectedUser,
+                items: users.map((user) {
+                  return ComboBoxItem(
+                    value: user,
+                    child: Text(user.name),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedUser = value;
+                  });
+                },
+                placeholder: const Text(
+                  '選択してください',
+                  style: TextStyle(color: kGreyColor),
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -350,7 +356,22 @@ class _AddWorkDialogState extends State<AddWorkDialog> {
           labelText: '上記内容で追加する',
           labelColor: kWhiteColor,
           backgroundColor: kBlueColor,
-          onPressed: () async {},
+          onPressed: () async {
+            String? error = await workProvider.create(
+              group: widget.homeProvider.currentGroup,
+              user: selectedUser,
+              startedAt: startedAt,
+              endedAt: endedAt,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            if (!mounted) return;
+            showMessage(context, '勤怠打刻を追加しました', true);
+            Navigator.pop(context);
+          },
         ),
       ],
     );

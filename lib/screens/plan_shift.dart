@@ -204,14 +204,10 @@ class _PlanDialogState extends State<PlanDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              color: plan?.color,
-              width: double.infinity,
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                plan?.subject ?? '',
-                style: const TextStyle(color: kWhiteColor),
-              ),
+            DisabledBox(
+              plan?.subject ?? '',
+              labelColor: kWhiteColor,
+              backgroundColor: plan?.color,
             ),
             const SizedBox(height: 8),
             InfoLabel(
@@ -581,12 +577,7 @@ class _ModPlanShiftDialogState extends State<ModPlanShiftDialog> {
           children: [
             InfoLabel(
               label: '働くスタッフ',
-              child: Container(
-                color: kGrey300Color,
-                width: double.infinity,
-                padding: const EdgeInsets.all(8),
-                child: Text(planShift?.userName ?? ''),
-              ),
+              child: DisabledBox(planShift?.userName ?? ''),
             ),
             const SizedBox(height: 8),
             InfoLabel(
