@@ -35,6 +35,30 @@ class UserModel {
     _createdAt = data['createdAt'].toDate() ?? DateTime.now();
   }
 
+  UserModel.fromMap(Map data) {
+    _id = data['id'] ?? '';
+    _name = data['name'] ?? '';
+    _email = data['email'] ?? '';
+    _password = data['password'] ?? '';
+    _uid = data['uid'] ?? '';
+    _token = data['token'] ?? '';
+    _lastWorkId = data['lastWorkId'] ?? '';
+    _lastWorkBreakId = data['lastWorkBreakId'] ?? '';
+    _createdAt = data['createdAt'].toDate() ?? DateTime.now();
+  }
+
+  Map toMap() => {
+        'id': _id,
+        'name': _name,
+        'email': _email,
+        'password': _password,
+        'uid': _uid,
+        'token': _token,
+        'lastWorkId': _lastWorkId,
+        'lastWorkBreakId': _lastWorkBreakId,
+        'createdAt': _createdAt,
+      };
+
   int getWorkStatus() {
     //0は未出勤
     //1は出勤中

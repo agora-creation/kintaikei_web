@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kintaikei_web/common/functions.dart';
@@ -9,6 +11,7 @@ import 'package:kintaikei_web/providers/login.dart';
 import 'package:kintaikei_web/providers/work.dart';
 import 'package:kintaikei_web/screens/work_table.dart';
 import 'package:kintaikei_web/services/date_time_picker.dart';
+import 'package:kintaikei_web/services/local_db.dart';
 import 'package:kintaikei_web/services/user.dart';
 import 'package:kintaikei_web/services/work.dart';
 import 'package:kintaikei_web/widgets/custom_button_sm.dart';
@@ -33,24 +36,49 @@ class WorkScreen extends StatefulWidget {
 class _WorkScreenState extends State<WorkScreen> {
   WorkService workService = WorkService();
   DateTimePickerService pickerService = DateTimePickerService();
+  LocalDBService localDBService = LocalDBService();
   DateTime searchMonth = DateTime.now();
   UserModel? searchUser;
   List<DateTime> days = [];
 
-  void _changeMonth(DateTime value) {
+  void _changeMonth(DateTime value) async {
     searchMonth = value;
+    await localDBService.setString(
+      'searchMonth',
+      convertDateText('yyyy-MM-dd', value),
+    );
     days = generateDays(searchMonth);
     setState(() {});
   }
 
-  void _changeUser(UserModel value) {
+  void _changeUser(UserModel? value) async {
     searchUser = value;
+    if (value != null) {
+      await localDBService.setString(
+        'searchUser',
+        json.encode(value.toMap()),
+      );
+    }
+    setState(() {});
+  }
+
+  void _init() async {
+    String? searchMonthString = await localDBService.getString('searchMonth');
+    if (searchMonthString != null) {
+      searchMonth = DateTime.parse(searchMonthString);
+      days = generateDays(searchMonth);
+    }
+    String? searchUserString = await localDBService.getString('searchUser');
+    if (searchUserString != null) {
+      Map searchUserMap = json.decode(searchUserString);
+      searchUser = UserModel.fromMap(searchUserMap);
+    }
     setState(() {});
   }
 
   @override
   void initState() {
-    _changeMonth(searchMonth);
+    _init();
     super.initState();
   }
 
