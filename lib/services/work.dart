@@ -30,8 +30,12 @@ class WorkService {
     required DateTime searchMonth,
     required UserModel? searchUser,
   }) {
-    Timestamp startAt = convertTimestamp(searchMonth, false);
-    Timestamp endAt = convertTimestamp(searchMonth, true);
+    DateTime monthS = DateTime(searchMonth.year, searchMonth.month, 1);
+    DateTime monthE = DateTime(searchMonth.year, searchMonth.month + 1, 1).add(
+      const Duration(days: -1),
+    );
+    Timestamp startAt = convertTimestamp(monthS, false);
+    Timestamp endAt = convertTimestamp(monthE, true);
     return FirebaseFirestore.instance
         .collection(collection)
         .where('companyId', isEqualTo: companyId ?? 'error')

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kintaikei_web/common/functions.dart';
 
 class UserModel {
   String _id = '';
@@ -35,7 +36,7 @@ class UserModel {
     _createdAt = data['createdAt'].toDate() ?? DateTime.now();
   }
 
-  UserModel.fromMap(Map data) {
+  UserModel.fromMap(Map<String, dynamic> data) {
     _id = data['id'] ?? '';
     _name = data['name'] ?? '';
     _email = data['email'] ?? '';
@@ -44,10 +45,10 @@ class UserModel {
     _token = data['token'] ?? '';
     _lastWorkId = data['lastWorkId'] ?? '';
     _lastWorkBreakId = data['lastWorkBreakId'] ?? '';
-    _createdAt = data['createdAt'].toDate() ?? DateTime.now();
+    _createdAt = DateTime.parse(data['createdAt'] ?? '');
   }
 
-  Map toMap() => {
+  Map<String, dynamic> toMap() => {
         'id': _id,
         'name': _name,
         'email': _email,
@@ -56,7 +57,7 @@ class UserModel {
         'token': _token,
         'lastWorkId': _lastWorkId,
         'lastWorkBreakId': _lastWorkBreakId,
-        'createdAt': _createdAt,
+        'createdAt': convertDateText('yyyy-MM-dd HH:mm', _createdAt),
       };
 
   int getWorkStatus() {

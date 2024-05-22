@@ -4,8 +4,15 @@ import 'package:kintaikei_web/common/style.dart';
 import 'package:kintaikei_web/models/work.dart';
 import 'package:kintaikei_web/providers/home.dart';
 import 'package:kintaikei_web/providers/login.dart';
+import 'package:kintaikei_web/providers/work.dart';
+import 'package:kintaikei_web/services/date_time_picker.dart';
+import 'package:kintaikei_web/widgets/custom_button_sm.dart';
+import 'package:kintaikei_web/widgets/datetime_range_form.dart';
+import 'package:kintaikei_web/widgets/disabled_box.dart';
+import 'package:kintaikei_web/widgets/link_text.dart';
 import 'package:kintaikei_web/widgets/work_list.dart';
 import 'package:kintaikei_web/widgets/work_total_list.dart';
+import 'package:provider/provider.dart';
 
 class WorkTable extends StatefulWidget {
   final LoginProvider loginProvider;
@@ -99,7 +106,14 @@ class _WorkTableState extends State<WorkTable> {
                             children: dayWorks.map((work) {
                               return WorkList(
                                 work: work,
-                                onPressed: () {},
+                                onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) => ModWorkDialog(
+                                    loginProvider: widget.loginProvider,
+                                    homeProvider: widget.homeProvider,
+                                    work: work,
+                                  ),
+                                ),
                               );
                             }).toList(),
                           ),
@@ -161,140 +175,201 @@ class _WorkTableState extends State<WorkTable> {
   }
 }
 
-// class ModWorkDialog extends StatefulWidget {
-//   final LoginProvider loginProvider;
-//   final HomeProvider homeProvider;
-//   final WorkModel work;
-//
-//   const ModWorkDialog({
-//     required this.loginProvider,
-//     required this.homeProvider,
-//     required this.work,
-//     super.key,
-//   });
-//
-//   @override
-//   State<ModWorkDialog> createState() => _ModWorkDialogState();
-// }
-//
-// class _ModWorkDialogState extends State<ModWorkDialog> {
-//   DateTimePickerService pickerService = DateTimePickerService();
-//   DateTime startedAt = DateTime.now();
-//   DateTime endedAt = DateTime.now();
-//
-//   void _init() async {
-//     startedAt = widget.work.startedAt;
-//     endedAt = startedAt.add(const Duration(hours: 8));
-//     setState(() {});
-//   }
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _init();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final workProvider = Provider.of<WorkProvider>(context);
-//     return ContentDialog(
-//       constraints: const BoxConstraints(
-//         maxWidth: 600,
-//         maxHeight: 650,
-//       ),
-//       title: const Text(
-//         '勤怠打刻を手入力で追加',
-//         style: TextStyle(fontSize: 18),
-//       ),
-//       content: SingleChildScrollView(
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             InfoLabel(
-//               label: '勤務スタッフ',
-//               child: ComboBox<UserModel?>(
-//                 isExpanded: true,
-//                 value: selectedUser,
-//                 items: users.map((user) {
-//                   return ComboBoxItem(
-//                     value: user,
-//                     child: Text(user.name),
-//                   );
-//                 }).toList(),
-//                 onChanged: (value) {
-//                   setState(() {
-//                     selectedUser = value;
-//                   });
-//                 },
-//                 placeholder: const Text(
-//                   '選択してください',
-//                   style: TextStyle(color: kGreyColor),
-//                 ),
-//               ),
-//             ),
-//             const SizedBox(height: 8),
-//             InfoLabel(
-//               label: '出勤時間 ～ 退勤時間',
-//               child: DatetimeRangeForm(
-//                 startedAt: startedAt,
-//                 startedOnTap: () async => await pickerService.boardPicker(
-//                   context: context,
-//                   init: startedAt,
-//                   title: '出勤時間を選択',
-//                   onChanged: (value) {
-//                     setState(() {
-//                       startedAt = value;
-//                       endedAt = startedAt.add(const Duration(hours: 1));
-//                     });
-//                   },
-//                 ),
-//                 endedAt: endedAt,
-//                 endedOnTap: () async => await pickerService.boardPicker(
-//                   context: context,
-//                   init: endedAt,
-//                   title: '退勤時間を選択',
-//                   onChanged: (value) {
-//                     setState(() {
-//                       endedAt = value;
-//                     });
-//                   },
-//                 ),
-//                 viewAllDay: false,
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//       actions: [
-//         CustomButtonSm(
-//           labelText: 'キャンセル',
-//           labelColor: kWhiteColor,
-//           backgroundColor: kGreyColor,
-//           onPressed: () => Navigator.pop(context),
-//         ),
-//         CustomButtonSm(
-//           labelText: '上記内容で追加する',
-//           labelColor: kWhiteColor,
-//           backgroundColor: kBlueColor,
-//           onPressed: () async {
-//             String? error = await workProvider.create(
-//               group: widget.homeProvider.currentGroup,
-//               user: selectedUser,
-//               startedAt: startedAt,
-//               endedAt: endedAt,
-//             );
-//             if (error != null) {
-//               if (!mounted) return;
-//               showMessage(context, error, false);
-//               return;
-//             }
-//             if (!mounted) return;
-//             showMessage(context, '勤怠打刻を追加しました', true);
-//             Navigator.pop(context);
-//           },
-//         ),
-//       ],
-//     );
-//   }
-// }
+class ModWorkDialog extends StatefulWidget {
+  final LoginProvider loginProvider;
+  final HomeProvider homeProvider;
+  final WorkModel work;
+
+  const ModWorkDialog({
+    required this.loginProvider,
+    required this.homeProvider,
+    required this.work,
+    super.key,
+  });
+
+  @override
+  State<ModWorkDialog> createState() => _ModWorkDialogState();
+}
+
+class _ModWorkDialogState extends State<ModWorkDialog> {
+  DateTimePickerService pickerService = DateTimePickerService();
+  DateTime startedAt = DateTime.now();
+  DateTime endedAt = DateTime.now();
+
+  void _init() async {
+    startedAt = widget.work.startedAt;
+    endedAt = widget.work.endedAt;
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final workProvider = Provider.of<WorkProvider>(context);
+    return ContentDialog(
+      constraints: const BoxConstraints(
+        maxWidth: 600,
+        maxHeight: 650,
+      ),
+      title: const Text(
+        '勤怠打刻を編集',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InfoLabel(
+              label: '勤務スタッフ',
+              child: DisabledBox(widget.work.userName),
+            ),
+            const SizedBox(height: 8),
+            InfoLabel(
+              label: '出勤時間 ～ 退勤時間',
+              child: DatetimeRangeForm(
+                startedAt: startedAt,
+                startedOnTap: () async => await pickerService.boardPicker(
+                  context: context,
+                  init: startedAt,
+                  title: '出勤時間を選択',
+                  onChanged: (value) {
+                    setState(() {
+                      startedAt = value;
+                      endedAt = startedAt.add(const Duration(hours: 1));
+                    });
+                  },
+                ),
+                endedAt: endedAt,
+                endedOnTap: () async => await pickerService.boardPicker(
+                  context: context,
+                  init: endedAt,
+                  title: '退勤時間を選択',
+                  onChanged: (value) {
+                    setState(() {
+                      endedAt = value;
+                    });
+                  },
+                ),
+                viewAllDay: false,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: LinkText(
+                label: 'この勤怠打刻を削除する',
+                color: kRedColor,
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (context) => DelWorkDialog(
+                    loginProvider: widget.loginProvider,
+                    homeProvider: widget.homeProvider,
+                    work: widget.work,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        CustomButtonSm(
+          labelText: 'キャンセル',
+          labelColor: kWhiteColor,
+          backgroundColor: kGreyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButtonSm(
+          labelText: '上記内容で保存する',
+          labelColor: kWhiteColor,
+          backgroundColor: kBlueColor,
+          onPressed: () async {
+            String? error = await workProvider.update(
+              work: widget.work,
+              startedAt: startedAt,
+              endedAt: endedAt,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            if (!mounted) return;
+            showMessage(context, '勤怠打刻を編集しました', true);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class DelWorkDialog extends StatefulWidget {
+  final LoginProvider loginProvider;
+  final HomeProvider homeProvider;
+  final WorkModel work;
+
+  const DelWorkDialog({
+    required this.loginProvider,
+    required this.homeProvider,
+    required this.work,
+    super.key,
+  });
+
+  @override
+  State<DelWorkDialog> createState() => _DelWorkDialogState();
+}
+
+class _DelWorkDialogState extends State<DelWorkDialog> {
+  @override
+  Widget build(BuildContext context) {
+    final workProvider = Provider.of<WorkProvider>(context);
+    return ContentDialog(
+      title: const Text(
+        '勤怠打刻を削除',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: const SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('この勤怠打刻を削除しますか？'),
+          ],
+        ),
+      ),
+      actions: [
+        CustomButtonSm(
+          labelText: 'キャンセル',
+          labelColor: kWhiteColor,
+          backgroundColor: kGreyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButtonSm(
+          labelText: '削除する',
+          labelColor: kWhiteColor,
+          backgroundColor: kRedColor,
+          onPressed: () async {
+            String? error = await workProvider.delete(
+              work: widget.work,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            if (!mounted) return;
+            showMessage(context, '勤怠打刻を削除しました', true);
+            Navigator.pop(context);
+            Navigator.of(context, rootNavigator: true).pop();
+          },
+        ),
+      ],
+    );
+  }
+}

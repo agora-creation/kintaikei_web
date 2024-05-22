@@ -112,7 +112,7 @@ String subTime(String left, String right) {
 
 Timestamp convertTimestamp(DateTime date, bool end) {
   String dateTime = '${convertDateText('yyyy-MM-dd', date)} 00:00:00.000';
-  if (end == true) {
+  if (end) {
     dateTime = '${convertDateText('yyyy-MM-dd', date)} 23:59:59.999';
   }
   return Timestamp.fromMillisecondsSinceEpoch(

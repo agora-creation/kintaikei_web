@@ -41,6 +41,28 @@ class WorkProvider with ChangeNotifier {
     return error;
   }
 
+  Future<String?> update({
+    required WorkModel? work,
+    required DateTime startedAt,
+    required DateTime endedAt,
+  }) async {
+    String? error;
+    if (work == null) return '打刻情報の編集に失敗しました';
+    if (startedAt.millisecondsSinceEpoch > endedAt.millisecondsSinceEpoch) {
+      return '日時を正しく選択してください';
+    }
+    try {
+      _workService.update({
+        'id': work.id,
+        'startedAt': startedAt,
+        'endedAt': endedAt,
+      });
+    } catch (e) {
+      error = '打刻情報の編集に失敗しました';
+    }
+    return error;
+  }
+
   Future<String?> delete({
     required WorkModel? work,
   }) async {

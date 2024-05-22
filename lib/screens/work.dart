@@ -51,14 +51,10 @@ class _WorkScreenState extends State<WorkScreen> {
     setState(() {});
   }
 
-  void _changeUser(UserModel? value) async {
+  void _changeUser(UserModel value) async {
     searchUser = value;
-    if (value != null) {
-      await localDBService.setString(
-        'searchUser',
-        json.encode(value.toMap()),
-      );
-    }
+    String searchUserMap = json.encode(value.toMap());
+    await localDBService.setString('searchUser', searchUserMap);
     setState(() {});
   }
 
@@ -66,11 +62,11 @@ class _WorkScreenState extends State<WorkScreen> {
     String? searchMonthString = await localDBService.getString('searchMonth');
     if (searchMonthString != null) {
       searchMonth = DateTime.parse(searchMonthString);
-      days = generateDays(searchMonth);
     }
+    days = generateDays(searchMonth);
     String? searchUserString = await localDBService.getString('searchUser');
     if (searchUserString != null) {
-      Map searchUserMap = json.decode(searchUserString);
+      Map<String, dynamic> searchUserMap = json.decode(searchUserString);
       searchUser = UserModel.fromMap(searchUserMap);
     }
     setState(() {});
@@ -130,14 +126,6 @@ class _WorkScreenState extends State<WorkScreen> {
               ),
               Row(
                 children: [
-                  CustomButtonSm(
-                    icon: FluentIcons.download,
-                    labelText: 'CSVをダウンロード',
-                    labelColor: kWhiteColor,
-                    backgroundColor: kGreenColor,
-                    onPressed: () {},
-                  ),
-                  const SizedBox(width: 4),
                   CustomButtonSm(
                     icon: FluentIcons.add,
                     labelText: '手入力で追加',
@@ -282,7 +270,7 @@ class _AddWorkDialogState extends State<AddWorkDialog> {
     users = await userService.selectListToUserIds(
       userIds: widget.homeProvider.currentGroup?.userIds ?? [],
     );
-    selectedUser = widget.searchUser;
+    selectedUser = users.singleWhere((e) => e.id == widget.searchUser?.id);
     startedAt = DateTime(
       DateTime.now().year,
       DateTime.now().month,
