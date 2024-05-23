@@ -262,7 +262,7 @@ class _ModWorkDialogState extends State<ModWorkDialog> {
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: LinkText(
-                label: 'この勤怠打刻を削除する',
+                label: 'この勤怠打刻情報を削除する',
                 color: kRedColor,
                 onTap: () => showDialog(
                   context: context,
@@ -300,7 +300,7 @@ class _ModWorkDialogState extends State<ModWorkDialog> {
               return;
             }
             if (!mounted) return;
-            showMessage(context, '勤怠打刻を編集しました', true);
+            showMessage(context, '勤怠打刻情報を編集しました', true);
             Navigator.pop(context);
           },
         ),
@@ -331,7 +331,7 @@ class _DelWorkDialogState extends State<DelWorkDialog> {
     final workProvider = Provider.of<WorkProvider>(context);
     return ContentDialog(
       title: const Text(
-        '勤怠打刻を削除',
+        '勤怠打刻情報を削除',
         style: TextStyle(fontSize: 18),
       ),
       content: const SingleChildScrollView(
@@ -339,7 +339,7 @@ class _DelWorkDialogState extends State<DelWorkDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('この勤怠打刻を削除しますか？'),
+            Text('この勤怠打刻情報を削除しますか？'),
           ],
         ),
       ),
@@ -364,7 +364,7 @@ class _DelWorkDialogState extends State<DelWorkDialog> {
               return;
             }
             if (!mounted) return;
-            showMessage(context, '勤怠打刻を削除しました', true);
+            showMessage(context, '勤怠打刻情報を削除しました', true);
             Navigator.pop(context);
             Navigator.of(context, rootNavigator: true).pop();
           },

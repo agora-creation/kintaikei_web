@@ -47,7 +47,7 @@ class WorkProvider with ChangeNotifier {
     required DateTime endedAt,
   }) async {
     String? error;
-    if (work == null) return '打刻情報の編集に失敗しました';
+    if (work == null) return '勤怠打刻情報の変更に失敗しました';
     if (startedAt.millisecondsSinceEpoch > endedAt.millisecondsSinceEpoch) {
       return '日時を正しく選択してください';
     }
@@ -58,7 +58,7 @@ class WorkProvider with ChangeNotifier {
         'endedAt': endedAt,
       });
     } catch (e) {
-      error = '打刻情報の編集に失敗しました';
+      error = '勤怠打刻情報の変更に失敗しました';
     }
     return error;
   }
@@ -67,13 +67,13 @@ class WorkProvider with ChangeNotifier {
     required WorkModel? work,
   }) async {
     String? error;
-    if (work == null) return '打刻情報の削除に失敗しました';
+    if (work == null) return '勤怠打刻情報の削除に失敗しました';
     try {
       _workService.delete({
         'id': work.id,
       });
     } catch (e) {
-      error = '打刻情報の削除に失敗しました';
+      error = '勤怠打刻情報の削除に失敗しました';
     }
     return error;
   }
