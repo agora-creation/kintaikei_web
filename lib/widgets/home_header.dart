@@ -389,7 +389,9 @@ class _DelGroupDialogState extends State<DelGroupDialog> {
               return;
             }
             await widget.loginProvider.reloadData();
-            widget.homeProvider.currentGroupClear();
+            widget.homeProvider.currentGroupClear(
+              widget.loginProvider.groups.first,
+            );
             if (!mounted) return;
             showMessage(context, 'グループをを削除しました', true);
             Navigator.pop(context);
@@ -505,7 +507,9 @@ class _ModCompanyDialogState extends State<ModCompanyDialog> {
               return;
             }
             await widget.loginProvider.reloadData();
-            widget.homeProvider.currentGroupClear();
+            widget.homeProvider.currentGroupClear(
+              widget.loginProvider.groups.first,
+            );
             if (!mounted) return;
             showMessage(context, '会社情報を変更しました', true);
             Navigator.pop(context);

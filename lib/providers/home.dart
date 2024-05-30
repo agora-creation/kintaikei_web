@@ -24,8 +24,9 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void currentGroupClear() {
+  void currentGroupClear(CompanyGroupModel? group) {
     currentIndex = 0;
+    currentGroup = group;
     notifyListeners();
   }
 
